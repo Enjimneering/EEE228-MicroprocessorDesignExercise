@@ -39,11 +39,11 @@ module FullAdder(
         1 1 0  1  0
         1 1 1  1  1
     
-        sum   =  ~a~bc   + ~ab~c + a~b~c + abc
-              =  a~b~c   + abc   + ~a~bc + ~ab~c 
-              =  a(~b~c) + a(bc) + ~a~bc + ~ab~c
-              =  a(~b~c  + bc)    + ~a~bc + ~ab~c
-              =  a(b xor c)      + ~a~bc + ~ab~c
+        sum   =  ~a~bc   + ~ab~c   + a~b~c + abc
+              =  a~b~c   + abc     + ~a~bc + ~ab~c 
+              =  a(~b~c) + a(bc)   +  ~a~bc + ~ab~c
+              =  a(~b~c  + bc)     + ~a~bc + ~ab~c
+              =  a(b xor c)        + ~a~bc + ~ab~c
               =  a(b xor c)              + ~a~bc + ~ab~c
               =  a(b xor c)                + ~a(bc + b~c)
               =  a(b xor c)                + ~ab(c + ~c)
