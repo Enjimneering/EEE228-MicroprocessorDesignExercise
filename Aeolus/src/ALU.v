@@ -1,5 +1,7 @@
 // Arithmetic Logic Unit
 
+`include "src/Registers.v"
+
 // Arithmetic Unit Components
 /*
          Arithmetic Unit
@@ -10,7 +12,6 @@
                     \     
                 Full adder 
 */
-
 
 module ArithmeticUnit (
     input wire       clk,
@@ -50,12 +51,10 @@ module ArithmeticUnit (
             overflow <= shiftFlag;
     end
 
-
-
 endmodule
 
 
-module ShiftRegister(  // sequential shift register (D type FF with Enable)
+module ShiftRegister (  // sequential shift register (D type FF with Enable)
         input wire       clk,
         input wire [3:0] in,
         input wire       loadEnable,
@@ -63,21 +62,18 @@ module ShiftRegister(  // sequential shift register (D type FF with Enable)
         output reg [3:0] out,
         output reg       flag
 );
-    
-    reg [3:0] inReg  = 0;
+   
+    wire [3:0] dataReg;
 
-    always @(posedge clk) begin
-        if (loadEnable) begin
-            inReg <= in;    
-        end
+    EnableDFF_4bit inShift (clk, loadEnable, in, dataReg);
 
-        if (shiftstate == 2'b10) begin     // LSH
-             {flag,out} = inReg << 1;
+        always @(posedge clk ) begin   
+            if (shiftstate == 2'b10) begin     // LSH
+                {flag,out} = dataReg << 1;
 
-        end if (shiftstate == 2'b01) begin // RSH
-            {flag,out} = inReg >> 1;
-        end
-
+            end if (shiftstate == 2'b01) begin // RSH
+                {flag,out} = dataReg >> 1;
+            end
     end
 
 endmodule
