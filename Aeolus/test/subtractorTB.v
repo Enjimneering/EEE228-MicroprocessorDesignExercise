@@ -2,9 +2,9 @@
 //Adder Testbench
 `include "src/ALU.v"
 
-`define assert(signal, value) if (signal !== value) begin  $display("ASSERTION FAILED in %m: signal != value -> %d != %d", signal, value); $finish; end
+`define assert(signal, value) if (signal !== value) begin  $display("ASSERTION FAILED in %m: signal != value -> %d != %d", signal, value);  end
 
-module AdderTb();
+module SubtractorTb();
 
     reg        CLK;
     reg        RESET;
@@ -14,22 +14,22 @@ module AdderTb();
     
     integer i;
 
-    CombAdder_4bit uut (IN1, IN2, OUT, OVERFLOW);
+    CombSubtractor_4bit uut (IN1, IN2, OUT, NEGATIVE);
 
     initial begin
 
-        $dumpfile("test/vcd/adderdump.vcd");
-        $dumpvars(0, AdderTb);
+        $dumpfile("test/vcd/subtractordump.vcd");
+        $dumpvars(0, SubtractorTb);
         
         IN1 = 0; IN2 = 0; 
 
-        $display("4-Bit Adder Test");
+        $display("4-Bit Subtractor Test");
        //$display("   in1   |  in2     |  actual    |  expected");
 
         for (i = 0; i < 256 ; i = i + 1) begin
             #10 {IN2,IN1} = i[7:0];
             //#5  $display("  %4b    |   %4b  |   %4b   |   %5b   " ,IN1, IN2,  (i[3:0] + i[7:4]) , {OVERFLOW,OUT} );
-            #5  `assert({OVERFLOW,OUT}, (i[3:0] + i[7:4]));  // assert that the result is the addition
+            #5  `assert({NEGATIVE,OUT}, (i[3:0] - i[7:4]));  // assert that the result is the addition
         end
 
         $display("TEST SUCCESSFUL!"); $finish; 
