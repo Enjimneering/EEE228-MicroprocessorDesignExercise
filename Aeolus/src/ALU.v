@@ -29,7 +29,7 @@ module ArithmeticUnit (
     wire [3:0] shiftOut, adderOut, subtractorOut;
     wire shiftFlag, adderOverflowFlag, subtractorOverflowFlag;
 
-    ShiftRegister       sr         (in1, {lshift,rshift}, shiftOut, shiftFlag);
+    ShiftRegister       sr         (clk, in1, enable, {lshift,rshift}, shiftOut, shiftFlag);
     CombAdder_4bit      adder      (in1, in2, adderOut, adderOverflowFlag);
     CombSubtractor_4bit subtractor (in1, in2, subtractorOut, subtractorOverflowFlag);
 
@@ -55,19 +55,29 @@ module ArithmeticUnit (
 endmodule
 
 
-module ShiftRegister( // combinational shift register
+module ShiftRegister(  // sequential shift register (D type FF with Enable)
+        input wire       clk,
         input wire [3:0] in,
+        input wire       loadEnable,
         input      [1:0] shiftstate,  //reg
         output reg [3:0] out,
         output reg       flag
 );
+    
+    reg [3:0] inReg  = 0;
 
-    always @(*) begin
-        if (shiftstate == 2'b10) begin // LSH
-             {flag,out} = in << 1;
-        end if (shiftstate == 2'b01) begin // RSH
-            {flag,out} = in >> 1;
+    always @(posedge clk) begin
+        if (loadEnable) begin
+            inReg <= in;    
         end
+
+        if (shiftstate == 2'b10) begin     // LSH
+             {flag,out} = inReg << 1;
+
+        end if (shiftstate == 2'b01) begin // RSH
+            {flag,out} = inReg >> 1;
+        end
+
     end
 
 endmodule
