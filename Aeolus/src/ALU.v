@@ -202,3 +202,35 @@ module SyncSubtractor_4bit (  // Synchronous, Behavioural Descriptiion
     end 
 
 endmodule
+
+//4-bit AND  
+module and_gate(
+         input wire [3:0] in1,
+         input wire [3:0] in2,
+         output wire [3:0] out
+);
+
+assign out = in1 & in2;
+         
+endmodule 
+
+// 4-bit OR
+
+module or_gate(
+         input wire [3:0] in1,
+         input wire [3:0] in2,
+         output wire [3:0] out
+);
+
+assign out = in1 | in2;
+endmodule
+
+//4-bit XOR
+module xor_gate (
+         input wire [3:0] in1, in2,
+         output wire [3:0] out
+);
+
+assign out = in1 ^ in2;
+
+endmodule 
