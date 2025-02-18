@@ -4,22 +4,23 @@
 
 // Arithmetic Unit Components
 /*
-         Arithmetic Unit
-              \
-            8-bit RC Adder
-                 \
-                4-Bit Adder
-                    \     
-                Full adder 
+               Arithmetic Unit
+            /         |             \
+        4bitAdder 4bitSubtractor 4bitShifter
+    
+
 */
 
-module ArithmeticUnit (
+module ArithmeticLogicUnit (
     input wire       clk,
     input wire       reset,
-    input            add,
-    input            sub,
-    input            lshift,
-    input            rshift,
+    input            ADD,
+    input            SUB,
+    input            LSH,
+    input            RSH,
+    input wire       AND,
+    input wire       OR,
+    input wire       XOR,
     input wire [3:0] in1,
     input wire [3:0] in2, 
     output reg [3:0] out,
@@ -29,38 +30,64 @@ module ArithmeticUnit (
 
     wire [3:0] shiftOut, adderOut, subtractorOut;
     wire shiftFlag, adderOverflowFlag, subtractorOverflowFlag;
+    wire [3:0] andOut;
+    wire [3:0] orOut;
+    wire [3:0] xorOut;
 
     ShiftRegister       sr         (clk, in1, enable, {lshift,rshift}, shiftOut, shiftFlag);
     CombAdder_4bit      adder      (in1, in2, adderOut, adderOverflowFlag);
     CombSubtractor_4bit subtractor (in1, in2, subtractorOut, subtractorOverflowFlag);
+    And_4bit            andGate    (in1, in2, andOut);
+    Or_4bit             orGate     (in1, in2, orOut);
+    Xor_4bit            xorGate    (in1, in2, xorOut);
 
-    always @(posedge clk) begin // assumes control signals can't be sent together
-        
-        if (add) begin
+
+    always @(posedge clk) begin // mux for  control signals - assumes they won't be sent together
+    
+        // Arithmetic
+        if (ADD) begin
             out <= adderOut;
             overflow <= adderOverflowFlag;
         end
 
-        if (sub) begin
+        if (SUB) begin
             out <= subtractorOut;
             overflow <= subtractorOverflowFlag;
         end
 
-        if (lshift || rshift)
+        if (LSH ^ RSH) begin
             out <= shiftOut;
             overflow <= shiftFlag;
+        end
+
+        // Logic
+
+        if (AND) begin
+            out <=  andOut;
+            overflow <= 0;
+        end
+
+        if (OR) begin
+            out <=  orOut;
+            overflow <= 0;
+        end
+
+        if (XOR) begin
+            out <=  xorOut;
+            overflow <= 0;    
+        end
     end
 
 endmodule
 
 
 module ShiftRegister (  // sequential shift register (D type FF with Enable)
-        input wire       clk,
-        input wire [3:0] in,
-        input wire       loadEnable,
-        input      [1:0] shiftstate,  //reg
-        output reg [3:0] out,
-        output reg       flag
+    input wire       clk,
+    input wire [3:0] in,
+    input wire       loadEnable,
+    input      [1:0] shiftstate,  //reg
+    output reg [3:0] out,
+    output reg       flag
 );
    
     wire [3:0] dataReg;
@@ -203,34 +230,40 @@ module SyncSubtractor_4bit (  // Synchronous, Behavioural Descriptiion
 
 endmodule
 
-//4-bit AND  
-module and_gate(
-         input wire [3:0] in1,
-         input wire [3:0] in2,
-         output wire [3:0] out
+// Logic Unit 
+/*
+    4-bit AND,OR and XOR gates.
+*/
+
+
+//4-bit AND - combinational
+module And_4bit(
+    input wire [3:0] in1,
+    input wire [3:0] in2,
+    output wire [3:0] out
 );
 
-assign out = in1 & in2;
+    assign out = in1 & in2;
          
 endmodule 
 
-// 4-bit OR
-
-module or_gate(
-         input wire [3:0] in1,
-         input wire [3:0] in2,
-         output wire [3:0] out
+// 4-bit OR - combinational
+module Or_4bit(
+    input wire [3:0] in1,
+    input wire [3:0] in2,
+    output wire [3:0] out
 );
 
-assign out = in1 | in2;
+    assign out = in1 | in2;
+
 endmodule
 
-//4-bit XOR
-module xor_gate (
-         input wire [3:0] in1, in2,
-         output wire [3:0] out
+//4 -bit XOR - combinational 
+module Xor_4bit (
+    input wire [3:0] in1, in2,
+    output wire [3:0] out
 );
 
-assign out = in1 ^ in2;
+    assign out = in1 ^ in2;
 
 endmodule 
