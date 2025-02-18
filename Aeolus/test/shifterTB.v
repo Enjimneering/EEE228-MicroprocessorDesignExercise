@@ -40,7 +40,7 @@ module ShifterTb();
         $display("LDS TEST");
         for (i = 0; i < 16 ; i = i + 1) begin
             #5  {IN1} = i[3:0];
-            #5  `assert({uut.inReg}, (i[3:0]));  // assert that the result is the shift
+            #5  `assert({uut.dataReg}, (i[3:0]));  // assert that the result is the shift
         end
         $display("Test Completed!");
 
