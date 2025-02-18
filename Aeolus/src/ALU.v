@@ -2,7 +2,7 @@
 
 // Arithmetic Unit Components
 /*
-         AU
+         Arithmetic Unit
               \
             8-bit RC Adder
                  \
@@ -11,6 +11,67 @@
                 Full adder 
 */
 
+
+module ArithmeticUnit (
+    input wire       clk,
+    input wire       reset,
+    input            add,
+    input            sub,
+    input            lshift,
+    input            rshift,
+    input wire [3:0] in1,
+    input wire [3:0] in2, 
+    output reg [3:0] out,
+    output reg       overflow
+
+);
+
+    wire [3:0] shiftOut, adderOut, subtractorOut;
+    wire shiftFlag, adderOverflowFlag, subtractorOverflowFlag;
+
+    ShiftRegister       sr         (in1, {lshift,rshift}, shiftOut, shiftFlag);
+    CombAdder_4bit      adder      (in1, in2, adderOut, adderOverflowFlag);
+    CombSubtractor_4bit subtractor (in1, in2, subtractorOut, subtractorOverflowFlag);
+
+    always @(posedge clk) begin // assumes control signals can't be sent together
+        
+        if (add) begin
+            out <= adderOut;
+            overflow <= adderOverflowFlag;
+        end
+
+        if (sub) begin
+            out <= subtractorOut;
+            overflow <= subtractorOverflowFlag;
+        end
+
+        if (lshift || rshift)
+            out <= shiftOut;
+            overflow <= shiftFlag;
+    end
+
+
+
+endmodule
+
+
+module ShiftRegister( // combinational shift register
+        input wire [3:0] in,
+        input      [1:0] shiftstate,  //reg
+        output reg [3:0] out,
+        output reg       flag
+);
+
+    always @(*) begin
+        if (shiftstate == 2'b10) begin // LSH
+             {flag,out} = in << 1;
+        end if (shiftstate == 2'b01) begin // RSH
+            {flag,out} = in >> 1;
+        end
+    end
+
+endmodule
+
 module FullAdder(
     input wire in1,
     input wire in2,
@@ -18,32 +79,12 @@ module FullAdder(
     output  sum,
     output  carryOut
 );
-
     assign {carryOut,sum} = in1 + in2; // behavioural description
 
-    /* Gate level Description - truth table (not conventional order for variables)
-        a b c  c  s
-        0 0 0  0  0
-        0 0 1  0  1
-        0 1 0  0  1
-        0 1 1  1  0
-        1 0 0  0  1
-        1 0 1  1  0
-        1 1 0  1  0
-        1 1 1  1  1
-    
-        sum   =  ~a~bc  + ~ab~c   + a~b~c   + abc
-        
-        carry = ~abc + a~bc + ab~c + abc
-              = bc(a + ~a) + a~bc + ab~c
-              = bc + a(~bc + b~c)
-              = bc + a(b ^ c)
-    */
 endmodule
 
-// ripple carry adder 4-bits
-
-module RippleCarryAdder_4bit ( //(synchronous design, hierarchal desgin)
+// ripple carry adder 4-bits - not verified
+module SyncRippleCarryAdder_4bit ( // synchronous design, hierarchal desgin
     input wire         clk,
     input wire         reset,
     input wire  [3:0]  in1,
@@ -89,33 +130,63 @@ module RippleCarryAdder_4bit ( //(synchronous design, hierarchal desgin)
 
 endmodule
 
-module Adder_8bit (    // Behavioural Descriptiion
-    input wire         clk,
-    input wire         reset,
-    input wire  [7:0]  in1,
-    input wire  [7:0]  in2,
-    output reg  [7:0]  out,
-    output reg         overflow
+// 4-bit adder
+module CombAdder_4bit ( // Conbinational, Behavioural Description
+    input wire  [3:0]  in1,
+    input wire  [3:0]  in2,
+    output reg  [3:0]  out,
+    output reg         overflow  
 );
 
-    always @(posedge clk ) begin
+    always @(*) begin
+        {overflow, out} <= in1 + in2;
+    end
+
+endmodule
+
+//  4-bit Subtractor
+module CombSubtractor_4bit (  // Combinational - Behavioural Description
+    input wire  [3:0]  in1,
+    input wire  [3:0]  in2,
+    output reg  [3:0]  out,
+    output reg         overflow  
+);
+
+    always @(*) begin
+        {overflow, out} <= in1 - in2;
+    end
+
+endmodule
+
+// 4-bit Adder
+module SyncAdder_4bit (  // Synchronous, Behavioural Descriptiion
+    input wire         clk,
+    input wire         reset,
+    input wire  [3:0]  in1,
+    input wire  [3:0]  in2,
+    output reg  [3:0]  out,
+    output reg         overflow  // what does this represent in a subtractionn?
+);
+    always @(posedge clk) begin
         if (~reset) begin
             {overflow, out} <= in1 + in2;
         end begin
             out <= 0;
         end
-    end
-    
+    end 
+
 endmodule
 
-module Subtractor_8bit (  // Behavioural Descriptiion
+//4-bit Subtractor
+module SyncSubtractor_4bit (  // Synchronous, Behavioural Descriptiion
     input wire         clk,
     input wire         reset,
-    input wire  [7:0]  in1,
-    input wire  [7:0]  in2,
-    output reg  [7:0]  out,
+    input wire  [3:0]  in1,
+    input wire  [3:0]  in2,
+    output reg  [3:0]  out,
     output reg         overflow  // what does this represent in a subtractionn?
 );
+
     always @(posedge clk ) begin
         if (~reset) begin
             {overflow, out} <= in1 - in2;
@@ -125,5 +196,3 @@ module Subtractor_8bit (  // Behavioural Descriptiion
     end 
 
 endmodule
-
-
