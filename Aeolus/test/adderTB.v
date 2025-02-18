@@ -18,7 +18,7 @@ module AdderTb();
 
     initial begin
 
-        $dumpfile("adderdump.vcd");
+        $dumpfile("src/test/vcd/adderdump.vcd");
         $dumpvars(0, AdderTb);
         
         IN1 = 0; IN2 = 0; 

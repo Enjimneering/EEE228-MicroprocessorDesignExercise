@@ -1,3 +1,3 @@
 all:
-	iverilog -o addertest.vvp test/adderTB.v 
-	vvp addertest.vvp
+	iverilog -o test/vcd/addertest.vvp test/adderTB.v 
+	vvp test/vcd/addertest.vvp
