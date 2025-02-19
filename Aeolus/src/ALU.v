@@ -16,33 +16,38 @@ module ArithmeticLogicUnit (
     input wire       reset,
     input            ADD,
     input            SUB,
+    input            LSR,
     input            LSH,
     input            RSH,
     input wire       AND,
     input wire       OR,
     input wire       XOR,
+    input wire       INV,
     input wire [3:0] in1,
     input wire [3:0] in2, 
     output reg [3:0] out,
-    output reg       overflow
+    output reg       overflow,
+    output wire      shiftFlag
 
 );
 
     wire [3:0] shiftOut, adderOut, subtractorOut;
-    wire shiftFlag, adderOverflowFlag, subtractorOverflowFlag;
+    wire adderOverflowFlag, subtractorOverflowFlag;
     wire [3:0] andOut;
     wire [3:0] orOut;
     wire [3:0] xorOut;
+    wire [3:0] notOut;
 
-    ShiftRegister       sr         (clk, in1, enable, {lshift,rshift}, shiftOut, shiftFlag);
+    ShiftRegister       sr         (clk, in1, LSR, {LSH,RSH}, shiftOut, shiftFlag);
     CombAdder_4bit      adder      (in1, in2, adderOut, adderOverflowFlag);
     CombSubtractor_4bit subtractor (in1, in2, subtractorOut, subtractorOverflowFlag);
     And_4bit            andGate    (in1, in2, andOut);
     Or_4bit             orGate     (in1, in2, orOut);
     Xor_4bit            xorGate    (in1, in2, xorOut);
+    Inv_4bit            notGate    (in1, notOut);
 
 
-    always @(posedge clk) begin // mux for  control signals - assumes they won't be sent together
+    always @(posedge clk) begin // mux for control signals - assumes they won't be sent together
     
         // Arithmetic
         if (ADD) begin
@@ -55,16 +60,18 @@ module ArithmeticLogicUnit (
             overflow <= subtractorOverflowFlag;
         end
 
-        if (LSH ^ RSH) begin
+        if (LSH) begin
             out <= shiftOut;
-            overflow <= shiftFlag;
+        end
+
+        if (RSH) begin
+            out <= shiftOut;
         end
 
         // Logic
-
         if (AND) begin
             out <=  andOut;
-            overflow <= 0;
+            overflow <= 0; 
         end
 
         if (OR) begin
@@ -76,6 +83,14 @@ module ArithmeticLogicUnit (
             out <=  xorOut;
             overflow <= 0;    
         end
+
+        if (INV) begin
+            out <=  notOut;
+            overflow <= 0;    
+        end
+
+
+
     end
 
 endmodule
@@ -85,22 +100,24 @@ module ShiftRegister (  // sequential shift register (D type FF with Enable)
     input wire       clk,
     input wire [3:0] in,
     input wire       loadEnable,
-    input      [1:0] shiftstate,  //reg
+    input      [1:0] shiftState,  //reg
     output reg [3:0] out,
     output reg       flag
 );
    
     wire [3:0] dataReg;
 
-    EnableDFF_4bit inShift (clk, loadEnable, in, dataReg);
+    EnableDFF_4bit inShift (clk, loadEnable, in, dataReg); // sequential load
 
-        always @(posedge clk ) begin   
-            if (shiftstate == 2'b10) begin     // LSH
+        always @(*) begin    // combinatorial output 
+
+            if (shiftState == 2'b10) begin     // LSH
                 {flag,out} = dataReg << 1;
 
-            end if (shiftstate == 2'b01) begin // RSH
+            end if (shiftState == 2'b01) begin // RSH
                 {flag,out} = dataReg >> 1;
             end
+
     end
 
 endmodule
@@ -117,7 +134,7 @@ module FullAdder(
 endmodule
 
 // ripple carry adder 4-bits - not verified
-module SyncRippleCarryAdder_4bit ( // synchronous design, hierarchal desgin
+module SyncRippleCarryAdder_4bit (  // synchronous design, hierarchal desgin
     input wire         clk,
     input wire         reset,
     input wire  [3:0]  in1,
@@ -230,9 +247,11 @@ module SyncSubtractor_4bit (  // Synchronous, Behavioural Descriptiion
 
 endmodule
 
-// Logic Unit 
-/*
-    4-bit AND,OR and XOR gates.
+// Logic Unit Components
+
+/*         Logic Unit
+        /      |       \
+      AND      OR       XOR 
 */
 
 
@@ -267,3 +286,14 @@ module Xor_4bit (
     assign out = in1 ^ in2;
 
 endmodule 
+
+//4 -bit XOR - combinational 
+module  Inv_4bit (
+    input wire [3:0] in1, 
+    output wire [3:0] out
+);
+
+    assign out = ~in1;
+
+endmodule 
+
