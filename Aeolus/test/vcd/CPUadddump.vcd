@@ -1,0 +1,1276 @@
+$date
+	Wed Feb 19 01:43:10 2025
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ns
+$end
+$scope module CPUaddTb $end
+$var wire 4 ! CPU_OUT [3:0] $end
+$var reg 1 " CLK $end
+$var reg 1 # RESET $end
+$var reg 8 $ SWITCHES [7:0] $end
+$scope module uut $end
+$var wire 1 % _LSR $end
+$var wire 1 " boardCLK $end
+$var wire 1 # reset $end
+$var wire 8 & switches [7:0] $end
+$var wire 4 ' opcode [3:0] $end
+$var wire 1 ( clk $end
+$var wire 4 ) aluOut [3:0] $end
+$var wire 1 * _XOR $end
+$var wire 1 + _SUB $end
+$var wire 1 , _SNZS $end
+$var wire 1 - _SNZA $end
+$var wire 1 . _RSH $end
+$var wire 1 / _OR $end
+$var wire 1 0 _LSH $end
+$var wire 1 1 _LDSB $end
+$var wire 1 2 _LDSA $end
+$var wire 1 3 _LDO2 $end
+$var wire 1 4 _LDO $end
+$var wire 1 5 _LDB $end
+$var wire 1 6 _LDA $end
+$var wire 1 7 _INV $end
+$var wire 1 8 _CLR $end
+$var wire 1 9 _AND $end
+$var wire 1 : _ADD $end
+$var wire 1 ; SF $end
+$var wire 1 < PCoverflow $end
+$var wire 4 = PCout [3:0] $end
+$var wire 4 > PCin [3:0] $end
+$var wire 4 ? Oout [3:0] $end
+$var wire 4 @ Bout [3:0] $end
+$var wire 4 A Aout [3:0] $end
+$var wire 4 B ACCout [3:0] $end
+$var reg 1 C _ADDin $end
+$var reg 1 D _shiftFlag $end
+$var reg 4 E cpuOut [3:0] $end
+$var reg 4 F in1 [3:0] $end
+$var reg 4 G in2 [3:0] $end
+$var reg 4 H incrementValue [3:0] $end
+$var reg 1 I writebackComplete $end
+$scope module ACC $end
+$var wire 1 8 reset $end
+$var wire 1 ( clk $end
+$var wire 4 J D [3:0] $end
+$var reg 4 K Q [3:0] $end
+$upscope $end
+$scope module LDOBuff $end
+$var wire 1 ( clk $end
+$var wire 1 4 D $end
+$var reg 1 3 Q $end
+$upscope $end
+$scope module PC $end
+$var wire 1 L enable $end
+$var wire 1 # reset $end
+$var wire 1 ( clk $end
+$var wire 4 M D [3:0] $end
+$var reg 4 N Q [3:0] $end
+$upscope $end
+$scope module RegA $end
+$var wire 4 O D [3:0] $end
+$var wire 1 6 enable $end
+$var wire 1 ( clk $end
+$var reg 4 P Q [3:0] $end
+$upscope $end
+$scope module RegB $end
+$var wire 4 Q D [3:0] $end
+$var wire 1 5 enable $end
+$var wire 1 ( clk $end
+$var reg 4 R Q [3:0] $end
+$upscope $end
+$scope module RegO $end
+$var wire 4 S D [3:0] $end
+$var wire 1 3 enable $end
+$var wire 1 ( clk $end
+$var reg 4 T Q [3:0] $end
+$upscope $end
+$scope module alu $end
+$var wire 1 C ADD $end
+$var wire 1 % LSR $end
+$var wire 4 U in1 [3:0] $end
+$var wire 4 V in2 [3:0] $end
+$var wire 1 # reset $end
+$var wire 4 W xorOut [3:0] $end
+$var wire 1 X subtractorOverflowFlag $end
+$var wire 4 Y subtractorOut [3:0] $end
+$var wire 4 Z shiftOut [3:0] $end
+$var wire 1 ; shiftFlag $end
+$var wire 4 [ orOut [3:0] $end
+$var wire 4 \ notOut [3:0] $end
+$var wire 1 ( clk $end
+$var wire 4 ] andOut [3:0] $end
+$var wire 1 ^ adderOverflowFlag $end
+$var wire 4 _ adderOut [3:0] $end
+$var wire 1 * XOR $end
+$var wire 1 + SUB $end
+$var wire 1 . RSH $end
+$var wire 1 / OR $end
+$var wire 1 0 LSH $end
+$var wire 1 7 INV $end
+$var wire 1 9 AND $end
+$var reg 4 ` out [3:0] $end
+$var reg 1 a overflow $end
+$scope module adder $end
+$var wire 4 b in1 [3:0] $end
+$var wire 4 c in2 [3:0] $end
+$var reg 4 d out [3:0] $end
+$var reg 1 ^ overflow $end
+$upscope $end
+$scope module andGate $end
+$var wire 4 e in1 [3:0] $end
+$var wire 4 f in2 [3:0] $end
+$var wire 4 g out [3:0] $end
+$upscope $end
+$scope module notGate $end
+$var wire 4 h in1 [3:0] $end
+$var wire 4 i out [3:0] $end
+$upscope $end
+$scope module orGate $end
+$var wire 4 j in1 [3:0] $end
+$var wire 4 k in2 [3:0] $end
+$var wire 4 l out [3:0] $end
+$upscope $end
+$scope module sr $end
+$var wire 4 m in [3:0] $end
+$var wire 1 % loadEnable $end
+$var wire 2 n shiftState [1:0] $end
+$var wire 4 o dataReg [3:0] $end
+$var wire 1 ( clk $end
+$var reg 1 ; flag $end
+$var reg 4 p out [3:0] $end
+$scope module inShift $end
+$var wire 4 q D [3:0] $end
+$var wire 1 % enable $end
+$var wire 1 ( clk $end
+$var reg 4 r Q [3:0] $end
+$upscope $end
+$upscope $end
+$scope module subtractor $end
+$var wire 4 s in1 [3:0] $end
+$var wire 4 t in2 [3:0] $end
+$var reg 4 u out [3:0] $end
+$var reg 1 X overflow $end
+$upscope $end
+$scope module xorGate $end
+$var wire 4 v in1 [3:0] $end
+$var wire 4 w in2 [3:0] $end
+$var wire 4 x out [3:0] $end
+$upscope $end
+$upscope $end
+$scope module clkdiv $end
+$var wire 1 " CLKin $end
+$var wire 1 ( CLKout $end
+$var parameter 32 y COUNTER_SIZE $end
+$var parameter 32 z COUNTER_TARGET $end
+$var reg 64 { counter [63:0] $end
+$upscope $end
+$scope module decoder $end
+$var wire 4 | instructionIn [3:0] $end
+$var wire 1 * XOR $end
+$var wire 1 + SUB $end
+$var wire 1 , SNZS $end
+$var wire 1 - SNZA $end
+$var wire 1 . RSH $end
+$var wire 1 / OR $end
+$var wire 1 0 LSH $end
+$var wire 1 1 LDSB $end
+$var wire 1 2 LDSA $end
+$var wire 1 4 LDO $end
+$var wire 1 5 LDB $end
+$var wire 1 6 LDA $end
+$var wire 1 7 INV $end
+$var wire 1 8 CLR $end
+$var wire 1 9 AND $end
+$var wire 1 : ADD $end
+$var reg 16 } ControlSignals [15:0] $end
+$upscope $end
+$scope module inc $end
+$var wire 4 ~ in1 [3:0] $end
+$var wire 4 !" in2 [3:0] $end
+$var reg 4 "" out [3:0] $end
+$var reg 1 < overflow $end
+$upscope $end
+$scope module rom $end
+$var wire 4 #" addressIn [3:0] $end
+$var wire 1 ( clk $end
+$var reg 4 $" dataOut [3:0] $end
+$upscope $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+b1 z
+b1000000 y
+$end
+#0
+$dumpvars
+bx $"
+bx #"
+bx ""
+b1 !"
+bx ~
+bx }
+bx |
+b1 {
+bx x
+bx w
+bx v
+bx u
+bx t
+bx s
+bx r
+bx q
+bx p
+bx o
+bx n
+bx m
+bx l
+bx k
+bx j
+bx i
+bx h
+bx g
+bx f
+bx e
+bx d
+bx c
+bx b
+xa
+bx `
+bx _
+x^
+bx ]
+bx \
+bx [
+bx Z
+bx Y
+xX
+bx W
+bx V
+bx U
+bx T
+bx S
+bx R
+b1 Q
+bx P
+b111 O
+bx N
+bx M
+1L
+bx K
+bx J
+1I
+b1 H
+bx G
+bx F
+bx E
+xD
+xC
+bx B
+bx A
+bx @
+bx ?
+bx >
+bx =
+x<
+x;
+x:
+x9
+x8
+x7
+x6
+x5
+x4
+x3
+x2
+x1
+x0
+x/
+x.
+x-
+x,
+x+
+x*
+bx )
+0(
+bx '
+b1110001 &
+z%
+b1110001 $
+1#
+1"
+bx !
+$end
+#5
+0"
+#10
+0<
+b1 >
+b1 M
+b1 ""
+0C
+07
+0*
+0/
+09
+0+
+0:
+0,
+0-
+18
+0.
+b0 n
+00
+01
+02
+04
+05
+06
+b10000000 }
+b0 =
+b0 N
+b0 ~
+b0 #"
+b111 '
+b111 |
+b111 $"
+b0 B
+b0 K
+b0 S
+1(
+b10 {
+1"
+#15
+0"
+#20
+b11 {
+1"
+0#
+#25
+0"
+#30
+0(
+b100 {
+1"
+#35
+0"
+#40
+b101 {
+1"
+#45
+0"
+#50
+b10 >
+b10 M
+b10 ""
+08
+16
+b1 }
+03
+b0 '
+b0 |
+b0 $"
+b1 =
+b1 N
+b1 ~
+b1 #"
+1(
+b110 {
+1"
+#55
+0"
+#60
+b111 {
+1"
+#65
+0"
+#70
+0(
+b1000 {
+1"
+#75
+0"
+#80
+b1001 {
+1"
+#85
+0"
+#90
+b11 >
+b11 M
+b11 ""
+15
+06
+b0xxx ]
+b0xxx g
+b1000 \
+b1000 i
+bx111 [
+bx111 l
+b10 }
+b111 F
+b111 U
+b111 b
+b111 e
+b111 h
+b111 j
+b111 m
+b111 q
+b111 s
+b111 v
+b10 =
+b10 N
+b10 ~
+b10 #"
+b1 '
+b1 |
+b1 $"
+b111 A
+b111 P
+bx B
+bx K
+bx S
+1(
+b1010 {
+1"
+#95
+0"
+#100
+b1011 {
+1"
+#105
+0"
+#110
+0(
+b1100 {
+1"
+#115
+0"
+#120
+b1101 {
+1"
+#125
+0"
+#130
+0^
+b1000 _
+b1000 d
+0X
+b110 Y
+b110 u
+b100 >
+b100 M
+b100 ""
+b1 ]
+b1 g
+b111 [
+b111 l
+b110 W
+b110 x
+1*
+05
+b1 G
+b1 V
+b1 c
+b1 f
+b1 k
+b1 t
+b1 w
+b100000000000000 }
+b1 @
+b1 R
+b1110 '
+b1110 |
+b1110 $"
+b11 =
+b11 N
+b11 ~
+b11 #"
+1(
+b1110 {
+1"
+#135
+0"
+#140
+b1111 {
+1"
+#145
+0"
+#150
+0(
+b10000 {
+1"
+#155
+0"
+#160
+b10001 {
+1"
+#165
+0"
+#170
+b101 >
+b101 M
+b101 ""
+0*
+14
+b100 }
+b100 =
+b100 N
+b100 ~
+b100 #"
+b10 '
+b10 |
+b10 $"
+0a
+b110 )
+b110 J
+b110 `
+1(
+b10010 {
+1"
+#175
+0"
+#180
+b10011 {
+1"
+#185
+0"
+#190
+0(
+b10100 {
+1"
+#195
+0"
+#200
+b10101 {
+1"
+#205
+0"
+#210
+b110 >
+b110 M
+b110 ""
+18
+04
+b10000000 }
+13
+b110 B
+b110 K
+b110 S
+b111 '
+b111 |
+b111 $"
+b101 =
+b101 N
+b101 ~
+b101 #"
+1(
+b10110 {
+1"
+#215
+0"
+#220
+b10111 {
+1"
+#225
+0"
+#230
+0(
+b11000 {
+1"
+#235
+0"
+#240
+b11001 {
+1"
+#245
+0"
+#250
+b111 >
+b111 M
+b111 ""
+b110 !
+b110 E
+b110 =
+b110 N
+b110 ~
+b110 #"
+b0 B
+b0 K
+b0 S
+03
+b110 ?
+b110 T
+1(
+b11010 {
+1"
+#255
+0"
+#260
+b11011 {
+1"
+#265
+0"
+#270
+0(
+b11100 {
+1"
+#275
+0"
+#280
+b11101 {
+1"
+#285
+0"
+#290
+b1000 >
+b1000 M
+b1000 ""
+b111 =
+b111 N
+b111 ~
+b111 #"
+1(
+b11110 {
+1"
+#295
+0"
+#300
+b11111 {
+1"
+#305
+0"
+#310
+0(
+b100000 {
+1"
+#315
+0"
+#320
+b100001 {
+1"
+#325
+0"
+#330
+b1001 >
+b1001 M
+b1001 ""
+b1000 =
+b1000 N
+b1000 ~
+b1000 #"
+1(
+b100010 {
+1"
+#335
+0"
+#340
+b100011 {
+1"
+#345
+0"
+#350
+0(
+b100100 {
+1"
+#355
+0"
+#360
+b100101 {
+1"
+#365
+0"
+#370
+b1010 >
+b1010 M
+b1010 ""
+b1001 =
+b1001 N
+b1001 ~
+b1001 #"
+1(
+b100110 {
+1"
+#375
+0"
+#380
+b100111 {
+1"
+#385
+0"
+#390
+0(
+b101000 {
+1"
+#395
+0"
+#400
+b101001 {
+1"
+#405
+0"
+#410
+b1011 >
+b1011 M
+b1011 ""
+b1010 =
+b1010 N
+b1010 ~
+b1010 #"
+1(
+b101010 {
+1"
+#415
+0"
+#420
+b101011 {
+1"
+#425
+0"
+#430
+0(
+b101100 {
+1"
+#435
+0"
+#440
+b101101 {
+1"
+#445
+0"
+#450
+b1100 >
+b1100 M
+b1100 ""
+b1011 =
+b1011 N
+b1011 ~
+b1011 #"
+1(
+b101110 {
+1"
+#455
+0"
+#460
+b101111 {
+1"
+#465
+0"
+#470
+0(
+b110000 {
+1"
+#475
+0"
+#480
+b110001 {
+1"
+#485
+0"
+#490
+b1101 >
+b1101 M
+b1101 ""
+b1100 =
+b1100 N
+b1100 ~
+b1100 #"
+1(
+b110010 {
+1"
+#495
+0"
+#500
+b110011 {
+1"
+#505
+0"
+#510
+0(
+b110100 {
+1"
+#515
+0"
+#520
+b110101 {
+1"
+#525
+0"
+#530
+b1110 >
+b1110 M
+b1110 ""
+b1101 =
+b1101 N
+b1101 ~
+b1101 #"
+1(
+b110110 {
+1"
+#535
+0"
+#540
+b110111 {
+1"
+#545
+0"
+#550
+0(
+b111000 {
+1"
+#555
+0"
+#560
+b111001 {
+1"
+#565
+0"
+#570
+b1111 >
+b1111 M
+b1111 ""
+b1110 =
+b1110 N
+b1110 ~
+b1110 #"
+1(
+b111010 {
+1"
+#575
+0"
+#580
+b111011 {
+1"
+#585
+0"
+#590
+0(
+b111100 {
+1"
+#595
+0"
+#600
+b111101 {
+1"
+#605
+0"
+#610
+1<
+b0 >
+b0 M
+b0 ""
+b1111 =
+b1111 N
+b1111 ~
+b1111 #"
+1(
+b111110 {
+1"
+#615
+0"
+#620
+b111111 {
+1"
+#625
+0"
+#630
+0(
+b1000000 {
+1"
+#635
+0"
+#640
+b1000001 {
+1"
+#645
+0"
+#650
+0<
+b1 >
+b1 M
+b1 ""
+b0 =
+b0 N
+b0 ~
+b0 #"
+1(
+b1000010 {
+1"
+#655
+0"
+#660
+b1000011 {
+1"
+#665
+0"
+#670
+0(
+b1000100 {
+1"
+#675
+0"
+#680
+b1000101 {
+1"
+#685
+0"
+#690
+b10 >
+b10 M
+b10 ""
+08
+16
+b1 }
+b0 '
+b0 |
+b0 $"
+b1 =
+b1 N
+b1 ~
+b1 #"
+1(
+b1000110 {
+1"
+#695
+0"
+#700
+b1000111 {
+1"
+#705
+0"
+#710
+0(
+b1001000 {
+1"
+#715
+0"
+#720
+b1001001 {
+1"
+#725
+0"
+#730
+b11 >
+b11 M
+b11 ""
+15
+06
+b10 }
+b10 =
+b10 N
+b10 ~
+b10 #"
+b1 '
+b1 |
+b1 $"
+b110 B
+b110 K
+b110 S
+1(
+b1001010 {
+1"
+#735
+0"
+#740
+b1001011 {
+1"
+#745
+0"
+#750
+0(
+b1001100 {
+1"
+#755
+0"
+#760
+b1001101 {
+1"
+#765
+0"
+#770
+b100 >
+b100 M
+b100 ""
+1*
+05
+b100000000000000 }
+b1110 '
+b1110 |
+b1110 $"
+b11 =
+b11 N
+b11 ~
+b11 #"
+1(
+b1001110 {
+1"
+#775
+0"
+#780
+b1001111 {
+1"
+#785
+0"
+#790
+0(
+b1010000 {
+1"
+#795
+0"
+#800
+b1010001 {
+1"
+#805
+0"
+#810
+b101 >
+b101 M
+b101 ""
+0*
+14
+b100 }
+b100 =
+b100 N
+b100 ~
+b100 #"
+b10 '
+b10 |
+b10 $"
+1(
+b1010010 {
+1"
+#815
+0"
+#820
+b1010011 {
+1"
+#825
+0"
+#830
+0(
+b1010100 {
+1"
+#835
+0"
+#840
+b1010101 {
+1"
+#845
+0"
+#850
+b110 >
+b110 M
+b110 ""
+18
+04
+b10000000 }
+13
+b111 '
+b111 |
+b111 $"
+b101 =
+b101 N
+b101 ~
+b101 #"
+1(
+b1010110 {
+1"
+#855
+0"
+#860
+b1010111 {
+1"
+#865
+0"
+#870
+0(
+b1011000 {
+1"
+#875
+0"
+#880
+b1011001 {
+1"
+#885
+0"
+#890
+b111 >
+b111 M
+b111 ""
+b110 =
+b110 N
+b110 ~
+b110 #"
+b0 B
+b0 K
+b0 S
+03
+1(
+b1011010 {
+1"
+#895
+0"
+#900
+b1011011 {
+1"
+#905
+0"
+#910
+0(
+b1011100 {
+1"
+#915
+0"
+#920
+b1011101 {
+1"
+#925
+0"
+#930
+b1000 >
+b1000 M
+b1000 ""
+b111 =
+b111 N
+b111 ~
+b111 #"
+1(
+b1011110 {
+1"
+#935
+0"
+#940
+b1011111 {
+1"
+#945
+0"
+#950
+0(
+b1100000 {
+1"
+#955
+0"
+#960
+b1100001 {
+1"
+#965
+0"
+#970
+b1001 >
+b1001 M
+b1001 ""
+b1000 =
+b1000 N
+b1000 ~
+b1000 #"
+1(
+b1100010 {
+1"
+#975
+0"
+#980
+b1100011 {
+1"
+#985
+0"
+#990
+0(
+b1100100 {
+1"
+#995
+0"
+#1000
+b1100101 {
+1"
+#1005
+0"
+#1010
+b1010 >
+b1010 M
+b1010 ""
+b1001 =
+b1001 N
+b1001 ~
+b1001 #"
+1(
+b1100110 {
+1"
+#1015
+0"
+#1020
+b1100111 {
+1"
+1#
+#1025
+0"
+#1030
+0(
+b1101000 {
+1"
+#1035
+0"
+#1040
+b1101001 {
+1"
+#1045
+0"
+#1050
+b1 >
+b1 M
+b1 ""
+b0 =
+b0 N
+b0 ~
+b0 #"
+1(
+b1101010 {
+1"
+#1055
+0"
+#1060
+b1101011 {
+1"
+#1065
+0"
+#1070
+0(
+b1101100 {
+1"
+#1075
+0"
+#1080
+b1101101 {
+1"
+#1085
+0"
+#1090
+08
+16
+b1 }
+b0 '
+b0 |
+b0 $"
+1(
+b1101110 {
+1"
+#1095
+0"
+#1100
+b1101111 {
+1"
+#1105
+0"
+#1110
+0(
+b1110000 {
+1"
+#1115
+0"
+#1120
+b1110001 {
+1"

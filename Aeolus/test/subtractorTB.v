@@ -1,5 +1,6 @@
+// Subtractor Testbench
 
-//Subtractor  Testbench
+`timescale 1ns/1ns
 `include "src/ALU.v"
 
 `define assert(signal, value) if (signal !== value) begin  $display("ASSERTION FAILED in %m: signal != value -> %d != %d", signal, value);  end

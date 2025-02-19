@@ -1,10 +1,7 @@
-
-//Subtractor  Testbench
+// Shifter Testbench
 
 `timescale 1ns/1ns
 `include "src/ALU.v"
-
-//Assertion macro
 
 `define assert(signal, value) if (signal !== value) begin  $display("ASSERTION FAILED in test %4b at time %0t ns : %m signal  !=  value expected: %5b, got: %5b", i[3:0], $time , value, signal); $finish; end
 
