@@ -93,6 +93,7 @@ module ArithmeticLogicUnit (
             out =  0;
             overflow = 0;    
         end
+        
     end
 
 endmodule
@@ -112,7 +113,6 @@ module ShiftRegister (  // sequential shift register (D type FF with Enable)
     EnableDFF_4bit inShift (clk, loadEnable, in, dataReg); // sequential load
 
         always @(*) begin    // combinatorial output 
-
             if (shiftState == 2'b10) begin     // LSH
                 {flag,out} = dataReg << 1;
 
@@ -120,7 +120,7 @@ module ShiftRegister (  // sequential shift register (D type FF with Enable)
                 {flag,out} = dataReg >> 1;
             end
 
-    end
+        end
 
 endmodule
 

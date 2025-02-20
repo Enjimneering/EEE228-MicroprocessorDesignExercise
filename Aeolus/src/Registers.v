@@ -34,7 +34,7 @@ module EnableDFF_4bit(
     always @(posedge clk) begin
         if (enable) begin
             Q <= D;
-        end
+        end 
     end
 
 endmodule

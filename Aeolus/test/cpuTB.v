@@ -5,7 +5,7 @@
 
 `define assert(signal, value) if (signal !== value) begin  $display("ASSERTION FAILED for OPCODE: %4b at time %0t ns : %m signal  !=  value expected: %5b, got: %5b", OPCODE , $time , value, signal); $finish; end
 
-module CPUaddTb();
+module CPUTb();
 
     reg        CLK;
     reg        RESET;
@@ -24,9 +24,9 @@ module CPUaddTb();
     initial begin
 
         $dumpfile("test/vcd/CPUadddump.vcd");
-        $dumpvars(0, CPUaddTb);
+        $dumpvars(0, CPUTb);
         
-        CLK = 1; RESET = 1; SWITCHES[7:0] = 8'b1110_0001; 
+        CLK = 1; RESET = 1; SWITCHES[7:0] = 8'b0011_1110; 
         #20 RESET = 0;
 
         #1000 RESET = 1;
