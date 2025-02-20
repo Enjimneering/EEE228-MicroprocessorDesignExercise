@@ -53,7 +53,7 @@ module AeolusCPUTop (
     // ROM inputs and outputs
     wire [3:0] opcode;
 
-    ProgramROM2 rom (
+    ProgramROM3 rom (
      .clk(clk),
      .addressIn(PCout),
      .dataOut(opcode)
@@ -100,6 +100,7 @@ module AeolusCPUTop (
     wire _ADD, _SUB, _LSR, _LSH, _RSH,
          _AND, _OR, _XOR, _INV;
 
+    assign _LSR = _LDSA || _LDSB;
     // ALU control
     reg _ADDin;
     reg _shiftFlag;
@@ -172,7 +173,6 @@ module AeolusCPUTop (
     // buffer and output register
     DFF LDOBuff (clk, _LDO,_LDO2);
     EnableDFF_4bit RegO (clk, _LDO, ACCout, Oout);
-
 
     always @(*) begin
         cpuOut = Oout;
