@@ -5,10 +5,9 @@
 // Arithmetic Unit Components
 /*
                Arithmetic Unit
-            /         |             \
+            /         |         \
         4bitAdder 4bitSubtractor 4bitShifter
-    
-
+        
 */
 
 module ArithmeticLogicUnit (
@@ -23,6 +22,7 @@ module ArithmeticLogicUnit (
     input wire       OR,
     input wire       XOR,
     input wire       INV,
+    input wire       CLR,
     input wire [3:0] in1,
     input wire [3:0] in2, 
     output reg [3:0] out,
@@ -47,50 +47,52 @@ module ArithmeticLogicUnit (
     Inv_4bit            notGate    (in1, notOut);
 
 
-    always @(posedge clk) begin // mux for control signals - assumes they won't be sent together
+    always @(*) begin // mux for control signals - assumes they won't be sent together
     
         // Arithmetic
         if (ADD) begin
-            out <= adderOut;
-            overflow <= adderOverflowFlag;
+            out = adderOut;
+            overflow = adderOverflowFlag;
         end
 
         if (SUB) begin
-            out <= subtractorOut;
-            overflow <= subtractorOverflowFlag;
+            out = subtractorOut;
+            overflow = subtractorOverflowFlag;
         end
 
         if (LSH) begin
-            out <= shiftOut;
+            out = shiftOut;
         end
 
         if (RSH) begin
-            out <= shiftOut;
+            out = shiftOut;
         end
 
         // Logic
         if (AND) begin
-            out <=  andOut;
-            overflow <= 0; 
+            out =  andOut;
+            overflow = 0; 
         end
 
         if (OR) begin
-            out <=  orOut;
-            overflow <= 0;
+            out =  orOut;
+            overflow = 0;
         end
 
         if (XOR) begin
-            out <=  xorOut;
-            overflow <= 0;    
+            out =  xorOut;
+            overflow = 0;    
         end
 
         if (INV) begin
-            out <=  notOut;
-            overflow <= 0;    
+            out =  notOut;
+            overflow = 0;    
         end
 
-
-
+         if (CLR) begin
+            out =  0;
+            overflow = 0;    
+        end
     end
 
 endmodule
@@ -189,7 +191,7 @@ module CombAdder_4bit ( // Conbinational, Behavioural Description
 );
 
     always @(*) begin
-        {overflow, out} <= in1 + in2;
+        {overflow, out} = in1 + in2;
     end
 
 endmodule
@@ -199,11 +201,11 @@ module CombSubtractor_4bit (  // Combinational - Behavioural Description
     input wire  [3:0]  in1,
     input wire  [3:0]  in2,
     output reg  [3:0]  out,
-    output reg         overflow  
+    output reg        overflow  
 );
 
     always @(*) begin
-        {overflow, out} <= in1 - in2;
+        {overflow, out} = in1 - in2;
     end
 
 endmodule
@@ -219,9 +221,9 @@ module SyncAdder_4bit (  // Synchronous, Behavioural Descriptiion
 );
     always @(posedge clk) begin
         if (~reset) begin
-            {overflow, out} <= in1 + in2;
+            {overflow, out} = in1 + in2;
         end begin
-            out <= 0;
+            out = 0;
         end
     end 
 
@@ -239,9 +241,9 @@ module SyncSubtractor_4bit (  // Synchronous, Behavioural Descriptiion
 
     always @(posedge clk ) begin
         if (~reset) begin
-            {overflow, out} <= in1 - in2;
+            {overflow, out} = in1 - in2;
         end begin
-            out <= 0;
+            out = 0;
         end
     end 
 

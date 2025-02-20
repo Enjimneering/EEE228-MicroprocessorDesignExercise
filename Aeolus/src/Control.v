@@ -7,18 +7,39 @@ module clkDiv(
     output wire CLKout
     );
 
-localparam COUNTER_SIZE = 64; 
-localparam COUNTER_TARGET = 1;
+    localparam COUNTER_SIZE = 64; 
+    localparam COUNTER_TARGET = 1;
 
 // T(clkOut) / T(clkin) = Countersize / counter target
 
-reg[COUNTER_SIZE - 1:0] counter = 0;
+    reg[COUNTER_SIZE - 1:0] counter = 0;
 
    always @(posedge CLKin) begin
         counter <= counter  + 1;
    end
 
    assign CLKout = counter[COUNTER_TARGET];
+
+endmodule
+
+module Counter_2bit(
+    input            clk,
+    input            reset,
+    input            enable,
+    output reg [1:0] value
+);
+
+    always @(posedge clk ) begin
+        if (~reset) begin
+            if (enable) begin
+                value <= value + 1;   
+            end
+        end else begin
+            value <= 0;
+        end
+      
+    end
+
 
 endmodule
 

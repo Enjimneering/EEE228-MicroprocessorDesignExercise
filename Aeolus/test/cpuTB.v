@@ -12,10 +12,8 @@ module CPUaddTb();
     reg  [7:0] SWITCHES;
     wire [3:0] CPU_OUT;
 
-    
     integer i;
 
-    
     AeolusCPUTop uut(
         .boardCLK(CLK),
         .reset(RESET),
@@ -23,13 +21,12 @@ module CPUaddTb();
         .cpuOut(CPU_OUT)
     );
 
-
     initial begin
 
         $dumpfile("test/vcd/CPUadddump.vcd");
         $dumpvars(0, CPUaddTb);
         
-        CLK = 1; RESET = 1; SWITCHES[7:0] = 8'b0111_0001; 
+        CLK = 1; RESET = 1; SWITCHES[7:0] = 8'b1110_0001; 
         #20 RESET = 0;
 
         #1000 RESET = 1;

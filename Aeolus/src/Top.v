@@ -4,26 +4,34 @@
 
 //  Multi-cycle implimentation
 
+//  Done: make everything single cycle 
+
+
+//  K 
 //  todo: comment and document the design so far.
-//  todo: add Logic for variable clock cycle instructions (instead of just delaying the signal)
-//  todo: Test: Shift, Load Shift Reg , Conditional Instructions
+//  todo: Test: Shift, Load Shift Reg 
+
+// J
 //  todo: impliment the example ROM.
-//  todo: optimise the desgin for area (ALU reduction / Get rid of the increment adder).
+//  todo: Test: conditional instructions
 
-//  extensions:
-//  todo: develop a single-cycle version
-//  todo: impliment NOP using a flag.
-//  todo: develop a pipelined desgin
-//  todo: look into 5-bit opcode decoder for expansion
+// BOTH .. later ...
+//  todo: optimise the design for area (ALU reduction / Get rid of the increment adder).
+
+//  Extensions:
+//  todo: develop an extended instruction set using multi cycle
+//  todo: impliment NOP 
+//  todo: develop a pipelined desgin with extended IS
 
 
-module AeolusCPUTop(
+module AeolusCPUTop (
 
     input wire       boardCLK,
     input wire       reset,
     input wire [7:0] switches,
     output reg [3:0] cpuOut
 );
+
     wire clk;
 
     // 100MHZ -> x MHz CLK
@@ -34,32 +42,24 @@ module AeolusCPUTop(
 
     // Program Counter 
     wire [3:0] PCin;
+    wire [3:0] INCout;
     wire [3:0] PCout;
     wire PCoverflow;
-    reg [3:0] incrementValue;
+    reg  incrementValue;
     
-    ResetEnableDFF_4bit PC (clk, reset, 1'b1, PCin, PCout);
-    
-    CombAdder_4bit inc (PCout, incrementValue , PCin, PCoverflow ); 
-    
-    // todo - variable cycle lengths.
-    // make the PC stay on LD0 for 2 cycles
+    ResetEnableDFF_4bit PC (clk, reset, 1'b1 , PCin, PCout);
+    CombAdder_4bit inc (PCout, 4'b0001, PCin , PCoverflow ); 
 
-    reg writebackComplete = 1;
-
-    always @(*) begin
-        if (writebackComplete) begin
-             incrementValue = 1;
-        end else begin 
-            incrementValue = 0;
-        end
-    end
-
+    // ROM inputs and outputs
     wire [3:0] opcode;
 
-    ProgramROM rom (clk, PCout, opcode);
+    ProgramROM2 rom (
+     .clk(clk),
+     .addressIn(PCout),
+     .dataOut(opcode)
+     );
 
-    // Instruction decoder
+    // instruction decoder
     InstructionDecoder decoder (
         .instructionIn(opcode),
         .LDA  (_LDA),
@@ -83,14 +83,12 @@ module AeolusCPUTop(
     // Regsiter File
 
     // A register
-
     wire       _LDA;
     wire [3:0] Aout;
 
     EnableDFF_4bit RegA (clk, _LDA, switches[7:4], Aout);
 
     // B register
-
     wire       _LDB;
     wire [3:0] Bout;
 
@@ -153,6 +151,7 @@ module AeolusCPUTop(
         .OR (_OR),
         .XOR(_XOR),
         .INV(_INV),
+        .CLR(_CLR),
         .in1(in1),
         .in2(in2), 
         .out(aluOut),
@@ -164,7 +163,7 @@ module AeolusCPUTop(
     wire [3:0] ACCout;
 
     // accumulator
-    ResetDFF_4bit ACC (clk, _CLR, aluOut, ACCout);
+    ResetDFF_4bit ACC (clk, _CLR || reset, aluOut, ACCout);
     
     wire      _LDO;
     wire      _LDO2;
@@ -172,7 +171,7 @@ module AeolusCPUTop(
     
     // buffer and output register
     DFF LDOBuff (clk, _LDO,_LDO2);
-    EnableDFF_4bit RegO (clk, _LDO2, ACCout, Oout);
+    EnableDFF_4bit RegO (clk, _LDO, ACCout, Oout);
 
 
     always @(*) begin
