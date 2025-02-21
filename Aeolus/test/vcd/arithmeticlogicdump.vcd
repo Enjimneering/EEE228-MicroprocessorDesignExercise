@@ -1,5 +1,5 @@
 $date
-	Tue Feb 18 18:37:26 2025
+	Fri Feb 21 11:23:48 2025
 $end
 $version
 	Icarus Verilog
@@ -13,73 +13,80 @@ $var wire 4 " ALU_OUT [3:0] $end
 $var reg 1 # CLK $end
 $var reg 4 $ IN1 [3:0] $end
 $var reg 4 % IN2 [3:0] $end
-$var reg 8 & OPCODE [7:0] $end
+$var reg 9 & OPCODE [8:0] $end
 $var reg 1 ' RESET $end
 $scope module alu $end
 $var wire 1 ( ADD $end
 $var wire 1 ) AND $end
-$var wire 1 * LSH $end
-$var wire 1 + LSR $end
-$var wire 1 , OR $end
-$var wire 1 - RSH $end
-$var wire 1 . SUB $end
-$var wire 1 / XOR $end
+$var wire 1 * CLR $end
+$var wire 1 + INV $end
+$var wire 1 , LSH $end
+$var wire 1 - LSR $end
+$var wire 1 . OR $end
+$var wire 1 / RSH $end
+$var wire 1 0 SUB $end
+$var wire 1 1 XOR $end
 $var wire 1 # clk $end
-$var wire 4 0 in1 [3:0] $end
-$var wire 4 1 in2 [3:0] $end
+$var wire 4 2 in1 [3:0] $end
+$var wire 4 3 in2 [3:0] $end
 $var wire 1 ' reset $end
-$var wire 4 2 xorOut [3:0] $end
-$var wire 1 3 subtractorOverflowFlag $end
-$var wire 4 4 subtractorOut [3:0] $end
-$var wire 4 5 shiftOut [3:0] $end
-$var wire 1 6 shiftFlag $end
-$var wire 4 7 orOut [3:0] $end
-$var wire 4 8 andOut [3:0] $end
-$var wire 1 9 adderOverflowFlag $end
-$var wire 4 : adderOut [3:0] $end
-$var reg 4 ; out [3:0] $end
+$var wire 4 4 xorOut [3:0] $end
+$var wire 1 5 subtractorOverflowFlag $end
+$var wire 4 6 subtractorOut [3:0] $end
+$var wire 4 7 shiftOut [3:0] $end
+$var wire 1 8 shiftFlag $end
+$var wire 4 9 orOut [3:0] $end
+$var wire 4 : notOut [3:0] $end
+$var wire 4 ; andOut [3:0] $end
+$var wire 1 < adderOverflowFlag $end
+$var wire 4 = adderOut [3:0] $end
+$var reg 4 > out [3:0] $end
 $var reg 1 ! overflow $end
 $scope module adder $end
-$var wire 4 < in1 [3:0] $end
-$var wire 4 = in2 [3:0] $end
-$var reg 4 > out [3:0] $end
-$var reg 1 9 overflow $end
-$upscope $end
-$scope module andGate $end
 $var wire 4 ? in1 [3:0] $end
 $var wire 4 @ in2 [3:0] $end
-$var wire 4 A out [3:0] $end
+$var reg 4 A out [3:0] $end
+$var reg 1 < overflow $end
 $upscope $end
-$scope module orGate $end
+$scope module andGate $end
 $var wire 4 B in1 [3:0] $end
 $var wire 4 C in2 [3:0] $end
 $var wire 4 D out [3:0] $end
 $upscope $end
+$scope module notGate $end
+$var wire 4 E in1 [3:0] $end
+$var wire 4 F out [3:0] $end
+$upscope $end
+$scope module orGate $end
+$var wire 4 G in1 [3:0] $end
+$var wire 4 H in2 [3:0] $end
+$var wire 4 I out [3:0] $end
+$upscope $end
 $scope module sr $end
 $var wire 1 # clk $end
-$var wire 4 E in [3:0] $end
-$var wire 1 + loadEnable $end
-$var wire 2 F shiftState [1:0] $end
-$var wire 4 G dataReg [3:0] $end
-$var reg 1 6 flag $end
-$var reg 4 H out [3:0] $end
+$var wire 4 J in [3:0] $end
+$var wire 1 - loadEnable $end
+$var wire 2 K shiftState [1:0] $end
+$var wire 4 L dataReg [3:0] $end
+$var reg 1 8 flag $end
+$var reg 4 M out [3:0] $end
 $scope module inShift $end
-$var wire 4 I D [3:0] $end
+$var wire 4 N D [3:0] $end
 $var wire 1 # clk $end
-$var wire 1 + enable $end
-$var reg 4 J Q [3:0] $end
+$var wire 1 - enable $end
+$var reg 4 O Q [3:0] $end
 $upscope $end
 $upscope $end
 $scope module subtractor $end
-$var wire 4 K in1 [3:0] $end
-$var wire 4 L in2 [3:0] $end
-$var reg 4 M out [3:0] $end
-$var reg 1 3 overflow $end
+$var wire 4 P in1 [3:0] $end
+$var wire 4 Q in2 [3:0] $end
+$var reg 4 R out [3:0] $end
+$var reg 1 5 overflow $end
 $upscope $end
 $scope module xorGate $end
-$var wire 4 N in1 [3:0] $end
-$var wire 4 O in2 [3:0] $end
-$var wire 4 P out [3:0] $end
+$var wire 4 S in1 [3:0] $end
+$var wire 4 T in2 [3:0] $end
+$var wire 4 U out [3:0] $end
 $upscope $end
 $upscope $end
 $upscope $end
@@ -89,45 +96,50 @@ $dumpall
 $end
 #0
 $dumpvars
-b10 P
-b101 O
+b10 U
+b101 T
+b111 S
+b10 R
+b101 Q
+b111 P
+bx O
 b111 N
-b10 M
-b101 L
-b111 K
-bx J
+b0 M
+bx L
+b0 K
+b111 J
 b111 I
-bx H
-bx G
-b0 F
+b101 H
+b111 G
+b1000 F
 b111 E
-b111 D
+b101 D
 b101 C
 b111 B
-b101 A
+b1100 A
 b101 @
 b111 ?
-b1100 >
-b101 =
-b111 <
-bx ;
-b1100 :
-09
-b101 8
-b111 7
-x6
-bx 5
+bx >
+b1100 =
+0<
+b101 ;
+b1000 :
+b111 9
+x8
+b0 7
+b10 6
+05
 b10 4
-03
-b10 2
-b101 1
-b111 0
+b101 3
+b111 2
+01
+00
 0/
 0.
 0-
 0,
 0+
-0*
+z*
 0)
 0(
 x'
@@ -143,21 +155,21 @@ $end
 #10
 1#
 #15
+0!
+b1100 "
+b1100 >
 1(
 0#
 b1 &
 #20
-0!
-b1100 "
-b1100 ;
 1#
 #25
 0#
 #30
 b10 "
-b10 ;
+b10 >
 0(
-1.
+10
 1#
 b10 &
 #35
@@ -167,10 +179,10 @@ b10 &
 #45
 0#
 #50
-b111 G
-b111 J
-0.
-1+
+b111 L
+b111 O
+00
+1-
 1#
 b100 &
 #55
@@ -180,47 +192,45 @@ b100 &
 #65
 0#
 #70
-x!
-bx "
-bx ;
-06
-b1110 5
-b1110 H
-0+
-b10 F
-1*
+b1110 "
+b1110 >
+08
+b1110 7
+b1110 M
+0-
+b10 K
+1,
 1#
 b1000 &
 #75
 0#
 #80
-0!
-b1110 "
-b1110 ;
 1#
 #85
 0#
 #90
-b11 5
-b11 H
-0*
-b1 F
-1-
+b11 "
+b11 >
+b11 7
+b11 M
+0,
+b1 K
+1/
 1#
 b10000 &
 #95
 0#
 #100
-b11 "
-b11 ;
 1#
 #105
 0#
 #110
+b0 7
+b0 M
 b101 "
-b101 ;
-b0 F
-0-
+b101 >
+b0 K
+0/
 1)
 1#
 b100000 &
@@ -232,9 +242,9 @@ b100000 &
 0#
 #130
 b111 "
-b111 ;
+b111 >
 0)
-1,
+1.
 1#
 b1000000 &
 #135
@@ -245,9 +255,9 @@ b1000000 &
 0#
 #150
 b10 "
-b10 ;
-0,
-1/
+b10 >
+0.
+11
 1#
 b10000000 &
 #155
@@ -255,4 +265,17 @@ b10000000 &
 #160
 1#
 #165
+0#
+#170
+b1000 "
+b1000 >
+01
+1+
+1#
+b100000000 &
+#175
+0#
+#180
+1#
+#185
 0#

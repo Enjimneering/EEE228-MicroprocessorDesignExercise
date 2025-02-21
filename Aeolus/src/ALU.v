@@ -121,7 +121,7 @@ module ShiftRegister (  // sequential shift register (D type FF with Enable)
                     {flag,out} = dataReg >> 1;
                 end
                 default begin  
-                    out = 0;
+                    out = dataReg;
                 end 
             endcase
         end 
