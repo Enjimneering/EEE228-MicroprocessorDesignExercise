@@ -1,3 +1,6 @@
+SRC ?= cpuTB
+VVP  ?= test.vvp
+
 all:
-	iverilog -o test/vcd/cputest.vvp test/cpuTB.v 
-	vvp test/vcd/cputest.vvp
+	iverilog -o test/vcd/$(VVP).vvp test/$(SRC).v 
+	vvp test/vcd/$(VVP).vvp
