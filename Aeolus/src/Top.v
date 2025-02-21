@@ -54,7 +54,6 @@ module AeolusCPUTop (
     wire [3:0] opcode;
 
     ProgramROM3 rom (
-     .clk(clk),
      .addressIn(PCout),
      .dataOut(opcode)
      );
@@ -97,8 +96,7 @@ module AeolusCPUTop (
     // ALU Instructions
     wire _LDSA, _LDSB;
 
-    wire _ADD, _SUB, _LSR, _LSH, _RSH,
-         _AND, _OR, _XOR, _INV;
+    wire _ADD, _SUB, _LSR, _LSH, _RSH,_AND, _OR, _XOR, _INV;
 
     assign _LSR = _LDSA || _LDSB;
     // ALU control

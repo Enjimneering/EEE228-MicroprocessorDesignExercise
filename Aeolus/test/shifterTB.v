@@ -3,7 +3,7 @@
 `timescale 1ns/1ns
 `include "src/ALU.v"
 
-`define assert(signal, value) if (signal !== value) begin  $display("ASSERTION FAILED in test %4b at time %0t ns : %m signal  !=  value expected: %5b, got: %5b", i[3:0], $time , value, signal); $finish; end
+`define assert(signal, value) if (signal !== value) begin  $display("ASSERTION FAILED in test %4b at time %0t ns : %m signal  !=  value expected: %5b, got: %5b", i[3:0], $time , value, signal); $finish;  end
 
 module ShifterTb();
 
@@ -41,10 +41,10 @@ module ShifterTb();
         end
         $display("Test Completed!");
 
-     
         // Test LSH
         $display("LSH TEST");
         #10 LSH = 1; IN1 = 0;
+
         for (i = 0; i < 16 ; i = i + 1) begin
             #5 {IN1} = i[3:0];
             //#5  $display("  %4b    |   %4b  |   %4b   |   %5b   " ,IN1, IN2,  (i[3:0] + i[7:4]) , {OVERFLOW,OUT} );
@@ -55,8 +55,8 @@ module ShifterTb();
         // Test RSH
                 
          $display("RSH TEST");
-         #10 IN1 = 0;
-         #10 LSH = 0; RSH = 1;
+            #10 IN1 = 0;
+            #10 LSH = 0; RSH = 1;
 
         for (i = 0; i < 16 ; i = i + 1) begin
             #5 {IN1} = i[3:0];

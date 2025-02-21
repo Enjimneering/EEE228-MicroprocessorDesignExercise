@@ -9,7 +9,7 @@
         4bitAdder 4bitSubtractor 4bitShifter
         
 */
-//poop
+
 module ArithmeticLogicUnit (
     input wire       clk,
     input wire       reset,
@@ -89,7 +89,7 @@ module ArithmeticLogicUnit (
             overflow = 0;    
         end
 
-         if (CLR) begin
+        if (CLR) begin
             out =  0;
             overflow = 0;    
         end
@@ -112,15 +112,19 @@ module ShiftRegister (  // sequential shift register (D type FF with Enable)
 
     EnableDFF_4bit inShift (clk, loadEnable, in, dataReg); // sequential load
 
-        always @(*) begin    // combinatorial output 
-            if (shiftState == 2'b10) begin     // LSH
-                {flag,out} = dataReg << 1;
-
-            end if (shiftState == 2'b01) begin // RSH
-                {flag,out} = dataReg >> 1;
-            end
-
-        end
+        always @(*) begin
+            case (shiftState)    // combinatorial output  
+                2: begin      // LSH
+                    {flag,out} = dataReg << 1;
+                end 
+                1: begin // RSH
+                    {flag,out} = dataReg >> 1;
+                end
+                default begin  
+                    out = 0;
+                end 
+            endcase
+        end 
 
 endmodule
 
@@ -222,7 +226,7 @@ module SyncAdder_4bit (  // Synchronous, Behavioural Descriptiion
     always @(posedge clk) begin
         if (~reset) begin
             {overflow, out} = in1 + in2;
-        end begin
+        end else begin
             out = 0;
         end
     end 
@@ -242,7 +246,7 @@ module SyncSubtractor_4bit (  // Synchronous, Behavioural Descriptiion
     always @(posedge clk ) begin
         if (~reset) begin
             {overflow, out} = in1 - in2;
-        end begin
+        end else begin
             out = 0;
         end
     end 
@@ -265,7 +269,7 @@ module And_4bit(
 );
 
     assign out = in1 & in2;
-         
+
 endmodule 
 
 // 4-bit OR - combinational

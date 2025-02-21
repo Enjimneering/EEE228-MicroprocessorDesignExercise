@@ -1,3 +1,3 @@
 all:
-	iverilog -o test/vcd/shiftertest.vvp test/shifterTB.v 
-	vvp test/vcd/shiftertest.vvp
+	iverilog -o test/vcd/cputest.vvp test/cpuTB.v 
+	vvp test/vcd/cputest.vvp
