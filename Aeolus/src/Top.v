@@ -118,15 +118,15 @@ module AeolusCPUTop (
             _ADDin = _ADD;
         end
 
-        if (_SNZA == 1  && _shiftFlag == 1 || _LDSA)  begin
+        if ((_SNZA == 1  && _shiftFlag == 1) || _LDSA)  begin
             in1 = Aout;
-            in2 = 0;
+            in2 = ACCout;
         end else if (_LDSB) begin
             in1 = Bout;
             in2 = 0;
         end else if ((_SNZS == 1 && _shiftFlag == 1)) begin
             in1 = alu.shiftOut ;
-            in2 = 0;
+            in2 = ACCout;
         end else begin // non conditional instructinos
             in1 = Aout;
             in2 = Bout;
