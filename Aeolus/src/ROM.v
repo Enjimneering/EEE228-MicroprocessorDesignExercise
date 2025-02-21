@@ -182,3 +182,53 @@ module ProgramROM3  ( // Conditional Test
     end
 
 endmodule
+
+module ProgramROM4  ( // Conditional Test
+    input  wire [3:0] addressIn,
+    output reg  [3:0] dataOut
+);
+
+    always @(*) begin
+
+        case (addressIn)
+            0: begin
+                dataOut = 4'b0000; //LDA
+            end
+
+            1: begin
+                dataOut = 4'b0001; //LDB
+            end
+
+            3: begin
+                dataOut = 4'b0100; // LDSB
+            end
+
+            4: begin
+                 dataOut = 4'b0101; // LSH
+            end
+
+            5: begin
+                 dataOut = 4'b1000; // SNZA
+            end
+
+            6: begin
+                dataOut = 4'b0000; //LDA
+            end
+
+            7: begin
+                dataOut = 4'b0001; //LDB
+            end
+
+            8: begin
+                 dataOut = 4'b0010; // LDO
+            end
+
+            default: begin
+                dataOut = 5'b0111; //CLR - basically a NOP operation.
+            end
+
+        endcase
+    
+    end
+
+endmodule
