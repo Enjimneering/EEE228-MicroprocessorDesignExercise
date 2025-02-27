@@ -42,7 +42,7 @@ Instruction Set List
 |       6        |      0110      |    RSH     |
 |       7        |      0111      |    CLR     |
 |       8        |      1000      |    SNZ A   |
-|       9        |      1001      |    SNZ B   |
+|       9        |      1001      |    SNZ S   |
 |       10       |      1010      |    ADD     |
 |       11       |      1101      |    SUB     |
 |       12       |      1101      |    AND     |
@@ -59,8 +59,7 @@ Architectural State Elements
 
   B register
   4-bit general purpose register, can be used as an ALU input.
-
-
+  
   ACC(umulator) register
   O(utput) register
   Shift flag

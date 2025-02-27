@@ -48,6 +48,8 @@ module AeolusCPUTop (
     reg  incrementValue;
     
     ResetEnableDFF_4bit PC (clk, reset, 1'b1 , PCin, PCout);
+
+    // Incrementer
     CombAdder_4bit inc (PCout, 4'b0001, PCin , PCoverflow ); 
 
     // ROM inputs and outputs
@@ -56,9 +58,11 @@ module AeolusCPUTop (
     ProgramROM3 rom (
      .addressIn(PCout),
      .dataOut(opcode)
-     );
+    );
 
     // instruction decoder
+    // opcode in -> control signal out
+    
     InstructionDecoder decoder (
         .instructionIn(opcode),
         .LDA  (_LDA),
@@ -79,53 +83,64 @@ module AeolusCPUTop (
         .INV  (_INV)
     );
 
-    // Regsiter File
+    // Regsiter File 
+    // contains A reg and B reg and O reg
 
-    // A register
-    wire       _LDA;
-    wire [3:0] Aout;
+    wire [3:0] Aout, Bout, Oout;
 
-    EnableDFF_4bit RegA (clk, _LDA, switches[7:4], Aout);
+    RegisterFile rf (
+        .clk(clk),
+        .reset(reset),
+        .AIn(switches[7:4]),
+        .BIn(switches[3:0]),
+        .OIn(ACCout),
+        .LDA(_LDA),
+        .LDB(_LDB),
+        .Aout(Aout),
+        .Bout(Bout),
+        .Oout(Oout)
+    );
 
-    // B register
-    wire       _LDB;
-    wire [3:0] Bout;
+    // ALU Instructions Control Signals
 
-    EnableDFF_4bit RegB (clk, _LDB, switches[3:0], Bout);
-
-    // ALU Instructions
-    wire _LDSA, _LDSB;
-
-    wire _ADD, _SUB, _LSR, _LSH, _RSH,_AND, _OR, _XOR, _INV;
-
+    wire LSR, _LDSA, _LDSB;        // Load shift register
     assign _LSR = _LDSA || _LDSB;
-    // ALU control
+
+    wire _LSR, _LSH, _RSH;          // Shift
+    wire _ADD, _SUB;                // Arithmetic
+    wire _AND, _OR, _XOR, _INV;     // Logical Instruction
+
+    // ALU control flags
     reg _ADDin;
     reg _shiftFlag;
     wire SF;
 
+    
     // ALU inputs
     reg [3:0] in1;
     reg [3:0] in2;
 
-    always @(*) begin // MUX for ALU inputs , different for some  operations e.g (SNZA, SNZB, LDSA and LDSB)
+    // MUX for ALU inputs , depends on control signals .
+    // e.g (SNZA, SNZB, LDSA and LDSB require different inputs.
+
+    always @(*) begin 
         
         _shiftFlag = SF;
 
+        // Instructions involving addition (SNZ and ADD)
         if (_SNZA | _SNZS ) begin
             _ADDin = 1;
-        end else  begin
+        end else begin
             _ADDin = _ADD;
         end
 
-        if ((_SNZA == 1  && _shiftFlag == 1) || _LDSA)  begin
+        if ((_SNZA == 1  && _shiftFlag == 1) || _LDSA)  begin // load A and Accumulator in.
             in1 = Aout;
             in2 = ACCout;
-        end else if (_LDSB) begin
+        end else if (_LDSB) begin // load B into shift reg
             in1 = Bout;
-            in2 = 0;
         end else if ((_SNZS == 1 && _shiftFlag == 1)) begin
-            in1 = alu.shiftOut ;
+            in1 = alu.shiftOut;
             in2 = ACCout;
         end else begin // non conditional instructinos
             in1 = Aout;
@@ -134,8 +149,9 @@ module AeolusCPUTop (
 
     end 
 
+    wire       OF; 
+    wire       _CLR;
     wire [3:0] aluOut;
-    wire       OF;
 
     // alu
     ArithmeticLogicUnit alu( 
@@ -158,20 +174,11 @@ module AeolusCPUTop (
         .shiftFlag(SF)
     );
 
-    wire       _CLR;
-    wire [3:0] ACCout;
-
     // accumulator
+    wire [3:0] ACCout;
     ResetDFF_4bit ACC (clk, _CLR || reset, aluOut, ACCout);
-    
-    wire      _LDO;
-    wire      _LDO2;
-    wire [3:0] Oout;
-    
-    // buffer and output register
-    DFF LDOBuff (clk, _LDO,_LDO2);
-    EnableDFF_4bit RegO (clk, _LDO, ACCout, Oout);
 
+    // output of the whole CPU
     always @(*) begin
         cpuOut = Oout;
     end
