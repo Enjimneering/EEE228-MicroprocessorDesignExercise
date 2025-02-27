@@ -201,3 +201,147 @@ module ProgramROM3  ( // Conditional Test
 
 endmodule
 
+module ProgramROMtest (  // Rom built for specific test case 
+    input  wire [3:0] addressIn,
+    output reg  [3:0] dataOut
+);
+
+    always @(*) begin
+
+        case (addressIn)
+            0: begin
+                dataOut = 4'b0000; //LDA
+            end
+
+            1: begin
+                dataOut = 4'b0001; //LDB
+            end
+
+            2: begin
+                 dataOut = 4'b0100; //LDSB
+            end
+
+            
+            3: begin
+                 dataOut = 4'b0110; //RSH
+            end
+
+            4: begin
+                 dataOut = 4'b1000; //SNZA
+            end
+
+            5: begin
+                 dataOut = 4'b0110; //RSH
+            end
+
+            6: begin
+                 dataOut = 4'b0011; //LDSA
+            end
+
+            7: begin
+                 dataOut = 4'b0101; //LSH
+            end
+
+            8: begin
+                 dataOut = 4'b1000; //SNZA
+            end
+
+            9: begin
+                 dataOut = 4'b0100; //LDSB
+            end
+
+            10: begin
+                 dataOut = 4'b0110; //RSH
+            end
+
+            11: begin
+                 dataOut = 4'b0110; //RSH
+            end
+
+            12: begin
+                 dataOut = 4'b0110; //RSH
+            end
+
+            13: begin
+                 dataOut = 4'b0011; //LDSA
+            end
+
+            14: begin
+                 dataOut = 4'b0101; //LSH
+            end
+
+            15: begin
+                 dataOut = 4'b0101; //LSH
+            end
+
+            16: begin
+                 dataOut = 4'b1000; //SNZA
+            end
+
+            17: begin
+                 dataOut = 4'b0100; //LDSB
+            end
+
+            18: begin
+                 dataOut = 4'b0110; //RSH
+            end
+
+            19: begin
+                 dataOut = 4'b0110; //RSH
+            end
+
+            20: begin
+                 dataOut = 4'b0110; //RSH
+            end
+
+            21: begin
+                 dataOut = 4'b0110; //RSH
+            end
+
+            22: begin
+                 dataOut = 4'b0011; //LDSA
+            end
+
+            23: begin
+                 dataOut = 4'b0101; //LSH
+            end
+
+            24: begin
+                 dataOut = 4'b0101; //LSH
+            end
+
+            25: begin
+                 dataOut = 4'b0101; //LSH
+            end
+
+            26: begin
+                 dataOut = 4'b1000; //SNZA
+            end
+
+            27: begin
+                 dataOut = 4'b0010; //LDO
+            end
+
+            28: begin
+                 dataOut = 4'b0111; //CLR
+            end
+
+            29: begin
+                 dataOut = 4'b0111; //CLR
+            end
+
+            30: begin
+                 dataOut = 4'b0111; //CLR
+            end
+
+            31: begin
+                 dataOut = 4'b0111; //CLR
+            end
+            default: begin
+                dataOut = 4'b0111; //CLR - basically a NOP operation.
+            end
+
+        endcase
+    end 
+endmodule 
+
