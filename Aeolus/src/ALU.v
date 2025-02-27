@@ -23,15 +23,18 @@ module ArithmeticLogicUnit (
     input wire       XOR,
     input wire       INV,
     input wire       CLR,
-    input wire [3:0] in1,
-    input wire [3:0] in2, 
-    output reg [3:0] out,
+    input wire [DATA_WIDTH-1:0] in1,
+    input wire [DATA_WIDTH-1:0] in2, 
+    output reg [DATA_WIDTH-1:0] out,
     output reg       overflow,
     output wire      shiftFlag
 
 );
 
-    wire [3:0] shiftOut, adderOut, subtractorOut;
+    parameter DATA_WIDTH = 8;
+
+    wire [3:0] shiftOut;
+    wire [7:0] adderOut, subtractorOut;
     wire adderOverflowFlag, subtractorOverflowFlag;
     wire [3:0] andOut;
     wire [3:0] orOut;
@@ -39,8 +42,10 @@ module ArithmeticLogicUnit (
     wire [3:0] notOut;
 
     ShiftRegister       sr         (clk, in1, LSR, {LSH,RSH}, shiftOut, shiftFlag);
-    CombAdder_4bit      adder      (in1, in2, adderOut, adderOverflowFlag);
-    CombSubtractor_4bit subtractor (in1, in2, subtractorOut, subtractorOverflowFlag);
+
+    CombAdder           adder      (in1, in2, adderOut, adderOverflowFlag); defparam adder.DATA_WIDTH=8;
+    CombSubtractor      subtractor (in1, in2, subtractorOut, subtractorOverflowFlag); defparam subtractor.DATA_WIDTH=8;
+
     And_4bit            andGate    (in1, in2, andOut);
     Or_4bit             orGate     (in1, in2, orOut);
     Xor_4bit            xorGate    (in1, in2, xorOut);
@@ -109,26 +114,39 @@ module ShiftRegister (  // sequential shift register (D type FF with Enable)
 );
    
     wire [3:0] dataReg;
+    reg [3:0] shiftRegIn;
 
-    EnableDFF_4bit inShift (clk, loadEnable, in, dataReg); // sequential load
+    wire enableReg;
+    reg shift; 
+
+
+    EnableDFF_4bit Shifter (clk, enableReg, in, dataReg); // sequential load
 
         always @(*) begin
             case (shiftState)    // combinatorial output  
                 2: begin      // LSH
                     {flag,out} = dataReg << 1;
+                    shiftRegIn = dataReg << 1;
+                    shift = 1;
                 end 
                 1: begin // RSH
                     {flag,out} = dataReg >> 1;
+                    shiftRegIn = dataReg >> 1;
+                    shift = 1;
                 end
+
                 default begin  
                     out = dataReg;
+                    shift = 0;
                 end 
             endcase
         end 
 
+        assign enableReg = loadEnable | shift;
+
 endmodule
 
-module FullAdder(
+module FullAdder (
     input wire in1,
     input wire in2,
     input wire carryIn,
@@ -187,16 +205,31 @@ module SyncRippleCarryAdder_4bit (  // synchronous design, hierarchal desgin
 endmodule
 
 
-module CombAdder (              // Conbinational, Behavioural Description
+module CombAdder (  // Conbinational, Behavioural Description
     input wire  [DATA_WIDTH - 1:0]  in1,
     input wire  [DATA_WIDTH - 1:0]  in2,
     output reg  [DATA_WIDTH - 1:0]  out,
-    output reg         overflow  
+    output reg                      overflow  
 );
     parameter DATA_WIDTH  = 4; //4-bit by default;
 
     always @(*) begin
         {overflow, out} = in1 + in2;
+    end
+
+endmodule
+
+//  4-bit Subtractor
+module CombSubtractor (  // Combinational - Behavioural Description
+    input wire  [DATA_WIDTH - 1:0]  in1,
+    input wire  [DATA_WIDTH - 1:0]  in2,
+    output reg  [DATA_WIDTH - 1:0]  out,
+    output reg                      overflow  
+);
+    parameter DATA_WIDTH  = 4; //4-bit by default;
+
+    always @(*) begin
+        {overflow, out} = in1 - in2;
     end
 
 endmodule

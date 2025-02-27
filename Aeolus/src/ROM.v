@@ -5,7 +5,6 @@ module ProgramROM (    // ROM for the main system
     input  wire [ADDR_WIDTH-1:0] addressIn,
     output reg  [3:0] dataOut
 );
-
     parameter ADDR_WIDTH = 8;
 
     always @(*) begin
@@ -85,9 +84,10 @@ endmodule
 // Program ROM 
 
 module ProgramROM2 (  // Rom built for specific test case 
-    input  wire [3:0] addressIn,
+    input  wire [ADDR_WIDTH-1:0] addressIn,
     output reg  [3:0] dataOut
 );
+    parameter ADDR_WIDTH = 4;
 
     always @(*) begin
 
@@ -202,9 +202,10 @@ module ProgramROM3  ( // Conditional Test
 endmodule
 
 module ProgramROMtest (  // Rom built for specific test case 
-    input  wire [3:0] addressIn,
+    input  wire [ADDR_WIDTH-1:0] addressIn,
     output reg  [3:0] dataOut
 );
+    parameter ADDR_WIDTH = 8;
 
     always @(*) begin
 

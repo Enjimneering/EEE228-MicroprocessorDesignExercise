@@ -10,7 +10,7 @@ module CPUTb();
     reg        CLK;
     reg        RESET;
     reg  [7:0] SWITCHES;
-    wire [3:0] CPU_OUT;
+    wire [7:0] CPU_OUT;
 
     integer i;
 
@@ -26,11 +26,9 @@ module CPUTb();
         $dumpfile("test/vcd/CPUadddump.vcd");
         $dumpvars(0, CPUTb);
         
-        CLK = 1; RESET = 1; SWITCHES[7:0] = 8'b1111_0010; 
+        CLK = 1; RESET = 1; SWITCHES[7:0] = 8'b0110_1000; 
         #20 RESET = 0;
-        #80 SWITCHES[7:0] = 8'b0001_0100; 
-        #1000 RESET = 1;
-        #100 $display("program complete!"); $finish; 
+        #3300 $display("program complete!"); $finish; 
     end
 
     always  begin

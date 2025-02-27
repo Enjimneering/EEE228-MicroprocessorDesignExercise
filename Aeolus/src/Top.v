@@ -29,7 +29,7 @@ module AeolusCPUTop (
     input wire       boardCLK,
     input wire       reset,
     input wire [7:0] switches,
-    output reg [3:0] cpuOut
+    output reg [7:0] cpuOut
 );
 
     wire clk;
@@ -53,8 +53,8 @@ module AeolusCPUTop (
 
     // Program ROM
     wire [3:0] opcode;
-    ProgramROM3 rom ( .addressIn(PCout), .dataOut(opcode));
-    //defparam rom.ADDR_WIDTH 8;
+    ProgramROMtest rom ( .addressIn(PCout), .dataOut(opcode));
+    defparam rom.ADDR_WIDTH = 8;
     
     // instruction decoder
     // opcode in -> control signal out
@@ -82,7 +82,8 @@ module AeolusCPUTop (
     // Regsiter File 
     // contains A reg and B reg and O reg
 
-    wire [3:0] Aout, Bout, Oout;
+    wire [3:0] Aout, Bout;
+    wire [7:0] Oout;
 
     RegisterFile rf (
         .clk(clk),
@@ -147,7 +148,7 @@ module AeolusCPUTop (
 
     wire       OF; 
     wire       _CLR;
-    wire [3:0] aluOut;
+    wire [7:0] aluOut;
 
     // alu
     ArithmeticLogicUnit alu( 
@@ -171,8 +172,8 @@ module AeolusCPUTop (
     );
 
     // accumulator
-    wire [3:0] ACCout;
-    ResetDFF_4bit ACC (clk, _CLR || reset, aluOut, ACCout);
+    wire [7:0] ACCout;
+    ResetDFF ACC (clk, _CLR || reset, aluOut, ACCout); defparam ACC.DATA_WIDTH = 8;
 
     // output of the whole CPU
     always @(*) begin
