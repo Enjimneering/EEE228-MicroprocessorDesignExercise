@@ -146,12 +146,8 @@ module ProgramROM3  ( // Conditional Test
             0: begin
                 dataOut = 4'b0000; //LDA
             end
-
-            1: begin
-                dataOut = 4'b0001; //LDB
-            end
             
-            2: begin 
+            1: begin 
                  dataOut = 4'b0011; //LDS A
             end
             
@@ -160,34 +156,22 @@ module ProgramROM3  ( // Conditional Test
             end
 
             4: begin
-                 dataOut = 4'b1000; // SNZA
-            end
-            
-            5: begin
-                 dataOut = 4'b0010; //LDO
-            end
-
-            6: begin
-                dataOut = 4'b0000; //LDA
-            end
-            
-            7: begin
-                dataOut = 4'b0001; //LDB
-            end
-            
-            8: begin 
-                 dataOut = 4'b0011; //LDS A
-            end
-
-            9: begin
                  dataOut = 4'b0101; // LSH
             end
 
-            11: begin
+            5: begin
+                 dataOut = 4'b0101; // LSH
+            end
+
+            6: begin
+                 dataOut = 4'b0110; //RSH
+            end
+
+            7: begin
                  dataOut = 4'b1000; // SNZA
             end
             
-            12: begin
+            8: begin
                  dataOut = 4'b0010; //LDO
             end
 
