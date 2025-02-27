@@ -2,9 +2,11 @@
 // ROM : Acts as a insturction storage unit for the CPU
 
 module ProgramROM (    // ROM for the main system 
-    input  wire [3:0] addressIn,
+    input  wire [ADDR_WIDTH-1:0] addressIn,
     output reg  [3:0] dataOut
 );
+
+    parameter ADDR_WIDTH = 8;
 
     always @(*) begin
 
