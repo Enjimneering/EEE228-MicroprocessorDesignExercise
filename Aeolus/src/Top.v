@@ -35,10 +35,7 @@ module AeolusCPUTop (
     wire clk;
 
     // 100MHZ -> x MHz CLK
-    clkDiv clkdiv(  
-        .CLKin(boardCLK),
-        .CLKout(clk)
-    );
+    clkDiv clkdiv(  .CLKin(boardCLK), .CLKout(clk) );
 
     // Program Counter 
     wire [7:0] PCin;
@@ -51,17 +48,14 @@ module AeolusCPUTop (
     defparam PC.DATA_WIDTH = 8;
    
     // Incrementer
-    CombAdder inc (PCout, 8'b0000_0001, PCin , PCoverflow ); 
+    CombAdder inc (PCout, 8'b0000_0001, PCin , PCoverflow); 
     defparam inc.DATA_WIDTH = 8;
 
-    // ROM inputs and outputs
+    // Program ROM
     wire [3:0] opcode;
-
-    ProgramROM3 rom (
-     .addressIn(PCout),
-     .dataOut(opcode)
-    );
-
+    ProgramROM3 rom ( .addressIn(PCout), .dataOut(opcode));
+    //defparam rom.ADDR_WIDTH 8;
+    
     // instruction decoder
     // opcode in -> control signal out
     
@@ -98,6 +92,7 @@ module AeolusCPUTop (
         .OIn(ACCout),
         .LDA(_LDA),
         .LDB(_LDB),
+        .LDO(_LDO),
         .Aout(Aout),
         .Bout(Bout),
         .Oout(Oout)
@@ -105,7 +100,7 @@ module AeolusCPUTop (
 
     // ALU Instructions Control Signals
 
-    wire LSR, _LDSA, _LDSB;        // Load shift register
+    wire LSR, _LDSA, _LDSB;         // Load shift register
     assign _LSR = _LDSA || _LDSB;
 
     wire _LSR, _LSH, _RSH;          // Shift
@@ -117,7 +112,6 @@ module AeolusCPUTop (
     reg _shiftFlag;
     wire SF;
 
-    
     // ALU inputs
     reg [3:0] in1;
     reg [3:0] in2;
