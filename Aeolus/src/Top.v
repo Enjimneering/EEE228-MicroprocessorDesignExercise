@@ -41,16 +41,18 @@ module AeolusCPUTop (
     );
 
     // Program Counter 
-    wire [3:0] PCin;
-    wire [3:0] INCout;
-    wire [3:0] PCout;
+    wire [7:0] PCin;
+    wire [7:0] INCout;
+    wire [7:0] PCout;
     wire PCoverflow;
     reg  incrementValue;
     
-    ResetEnableDFF_4bit PC (clk, reset, 1'b1 , PCin, PCout);
-
+    ResetEnableDFF PC (clk, reset, 1'b1 , PCin, PCout);
+    defparam PC.DATA_WIDTH = 8;
+   
     // Incrementer
-    CombAdder_4bit inc (PCout, 4'b0001, PCin , PCoverflow ); 
+    CombAdder inc (PCout, 8'b0000_0001, PCin , PCoverflow ); 
+    defparam inc.DATA_WIDTH = 8;
 
     // ROM inputs and outputs
     wire [3:0] opcode;

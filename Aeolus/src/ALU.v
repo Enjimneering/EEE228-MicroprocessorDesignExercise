@@ -186,6 +186,22 @@ module SyncRippleCarryAdder_4bit (  // synchronous design, hierarchal desgin
 
 endmodule
 
+
+module CombAdder (              // Conbinational, Behavioural Description
+    input wire  [DATA_WIDTH - 1:0]  in1,
+    input wire  [DATA_WIDTH - 1:0]  in2,
+    output reg  [DATA_WIDTH - 1:0]  out,
+    output reg         overflow  
+);
+    parameter DATA_WIDTH  = 4; //4-bit by default;
+
+    always @(*) begin
+        {overflow, out} = in1 + in2;
+    end
+
+endmodule
+
+
 // 4-bit adder
 module CombAdder_4bit ( // Conbinational, Behavioural Description
     input wire  [3:0]  in1,
