@@ -37,6 +37,7 @@ module ShifterTb();
         $display("LDS TEST");
         i = 4'b0010;
         #5  {IN1} = i[3:0];
+        #5  `assert({uut.dataReg}, (i[3:0]));
         
         $display("RSH TEST");
         #10 RSH = 1;
