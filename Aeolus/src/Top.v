@@ -2,61 +2,59 @@
 `include "src/Control.v"
 `include "src/ROM.v"
 
-//  Multi-cycle implimentation
+//  Done:
+//        impliment the example ROM.
+//        test example program
 
-//  Done: make everything single cycle 
-
-
-//  K 
+//  Both:
 //  todo: comment and document the design so far.
-//  todo: Test: Shift, Load Shift Reg 
+//  todo: wire test benches and sign off on:
+//  conditional instructions
+//  shift flag/ L/RSH Results
+//  todo: 
 
-// J
-//  todo: impliment the example ROM.
-//  todo: Test: conditional instructions
 
-// BOTH .. later ...
-//  todo: optimise the design for area (ALU reduction / Get rid of the increment adder).
+//  Extension Tasks - develop an extended instruction set for graphics  (w/ NOP)
+//  Extension Tasks - develop a multi-cycle version (logic reduction)
+//  Extension Tasks - develop a pipelined version
 
-//  Extensions:
-//  todo: develop an extended instruction set using multi cycle
-//  todo: impliment NOP 
-//  todo: develop a pipelined desgin with extended IS
 
 
 module AeolusCPUTop (
-
+    input wire       clk,
     input wire       boardCLK,
     input wire       reset,
     input wire [7:0] switches,
     output reg [7:0] cpuOut
 );
 
-    wire clk;
+    parameter ROM_ADDRESS_WIDTH = 8;
+    parameter INPUT_DATA_WIDTH = 4;
+    parameter OUTPUT_DATA_WIDTH = 8;
 
-    // 100MHZ -> x MHz CLK
+    // Clock divider 
     clkDiv clkdiv(  .CLKin(boardCLK), .CLKout(clk) );
 
     // Program Counter 
-    wire [7:0] PCin;
-    wire [7:0] INCout;
-    wire [7:0] PCout;
+    wire [ROM_ADDRESS_WIDTH-1:0] PCin;
+    wire [ROM_ADDRESS_WIDTH-1:0] INCout;
+    wire [ROM_ADDRESS_WIDTH-1:0] PCout;
     wire PCoverflow;
     reg  incrementValue;
     
     ResetEnableDFF PC (clk, reset, 1'b1 , PCin, PCout);
-    defparam PC.DATA_WIDTH = 8;
+    defparam PC.DATA_WIDTH = ROM_ADDRESS_WIDTH;
    
     // Incrementer
     CombAdder inc (PCout, 8'b0000_0001, PCin , PCoverflow); 
-    defparam inc.DATA_WIDTH = 8;
+    defparam inc.DATA_WIDTH = ROM_ADDRESS_WIDTH;
 
     // Program ROM
     wire [3:0] opcode;
     ProgramROMtest rom ( .addressIn(PCout), .dataOut(opcode));
-    defparam rom.ADDR_WIDTH = 8;
+    defparam rom.ADDR_WIDTH = ROM_ADDRESS_WIDTH;
     
-    // instruction decoder
+    // Instruction Decoder
     // opcode in -> control signal out
     
     InstructionDecoder decoder (
@@ -82,13 +80,18 @@ module AeolusCPUTop (
     // Regsiter File 
     // contains A reg and B reg and O reg
 
-    wire [3:0] Aout, Bout;
-    wire [7:0] Oout;
+    wire [INPUT_DATA_WIDTH-1:0]  Aout, Bout;
+    reg  [INPUT_DATA_WIDTH-1:0]  Ain, Bin;
+    wire [OUTPUT_DATA_WIDTH-1:0] Oout;
+    reg  [OUTPUT_DATA_WIDTH-1:0] Oin;
 
-    //synch reset for regs
-    
+    // Synch reset for register file output 
     always @(posedge clk) begin
-
+        if (~reset) begin
+            Oin = ACCout;
+        end else begin
+            Oin = 0;
+        end
 
     end
 
@@ -97,7 +100,7 @@ module AeolusCPUTop (
         .reset(reset),
         .AIn(switches[7:4]),
         .BIn(switches[3:0]),
-        .OIn(ACCout),
+        .OIn(Oin),
         .LDA(_LDA),
         .LDB(_LDB),
         .LDO(_LDO),
@@ -111,9 +114,7 @@ module AeolusCPUTop (
     assign _LSR = _LDSA || _LDSB;
     wire _LSR, _LSH, _RSH;          // Shift
 
-
     // MUX for Shift Register Inputs 
-
     always @(*) begin
         if (_LDSA) begin
            shiftIn = Aout;
@@ -125,41 +126,32 @@ module AeolusCPUTop (
     end
 
     //  Shifter
-    reg [3:0] shiftIn;
-    wire [7:0] shiftOut;
+    reg  [INPUT_DATA_WIDTH-1:0]  shiftIn;
+    wire [OUTPUT_DATA_WIDTH-1:0] shiftOut;
     wire SF;
-    //reg _shiftFlag;
 
     ShiftRegister sr (clk, reset, shiftIn, _LSR, {_LSH,_RSH}, shiftOut, SF);
 
-
-    // ALU Instructions Control Signals
-
-    // ALU control flags
+    // ALU addition control flags 
     reg _ADDin;
 
+    // MUX for addition control flag
     always @(*) begin 
 
         if ((_SNZA | _SNZS)) begin
-            
             if (SF == 1)
                 _ADDin = 1;
             end else begin
                 _ADDin = _ADD;
             end
-
-
     end 
-
 
     wire _ADD, _SUB;                // Arithmetic
     wire _AND, _OR, _XOR, _INV;     // Logical Instruction
 
-
     // ALU inputs
-    reg [7:0] in1;
-    reg [7:0] in2;
-
+    reg [OUTPUT_DATA_WIDTH-1:0] in1;
+    reg [OUTPUT_DATA_WIDTH-1:0] in2;
 
     // MUX for ALU inputs , depends on control signals .
     // e.g (SNZA, SNZB, LDSA and LDSB require different inputs.
@@ -173,7 +165,7 @@ module AeolusCPUTop (
         end else if (_LDSB) begin // load B into shift reg
             in1 = Bout;
 
-        end else if ((_SNZS == 1 && SF == 1)) begin
+        end else if ((_SNZS == 1 && SF == 1)) begin // add ACC and Shifter
             in1 = shiftOut;
             in2 = ACCout;
 
@@ -184,19 +176,17 @@ module AeolusCPUTop (
 
     end 
 
+    // ACC inputs
     wire        OF; 
     wire       _CLR;
-    wire [7:0] aluOut;
+    wire [OUTPUT_DATA_WIDTH-1:0] aluOut;
 
-    // alu
+    // Arithmetic Logic Unit (combintorial)
     ArithmeticLogicUnit alu( 
         .clk(clk),
         .reset(reset),
         .ADD(_ADDin),
         .SUB(_SUB),
-        .LSR(_LSR),
-        .LSH(_LSH),
-        .RSH(_RSH),
         .AND(_AND),
         .OR (_OR),
         .XOR(_XOR),
@@ -209,14 +199,16 @@ module AeolusCPUTop (
         .shiftFlag(SF)
     );
 
-    // accumulator
-    wire [7:0] ACCout;
-    
-    wire enableALU = _CLR || _ADDin || _SUB;
+    // Accumulator (ACC)
+    wire [OUTPUT_DATA_WIDTH-1:0] ACCout;
+    wire logicSignal = _AND ||  _OR || _XOR || _INV;
+    wire arithmeticSignal = _ADDin || _SUB;
+    wire enableALU = _CLR || arithmeticSignal || logicSignal;  // alu needs to be enabled usign the relevant instruction
 
-    ResetEnableDFF ACC (clk, _CLR || reset, enableALU , aluOut, ACCout); defparam ACC.DATA_WIDTH = 8;
+    ResetEnableDFF ACC (clk, _CLR || reset, enableALU , aluOut, ACCout); 
+    defparam ACC.DATA_WIDTH = OUTPUT_DATA_WIDTH;
 
-    // output of the whole CPU
+    // CPU Output
     always @(*) begin
         cpuOut = Oout;
     end
