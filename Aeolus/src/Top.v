@@ -125,12 +125,11 @@ module AeolusCPUTop (
         _shiftFlag = SF;
 
         // Instructions involving addition (SNZ and ADD)
-        if (_SNZA | _SNZS ) begin
+        if ((_SNZA | _SNZS) && _shiftFlag == 1) begin
             _ADDin = 1;
         end else begin
             _ADDin = _ADD;
         end
-
         if ((_SNZA == 1  && _shiftFlag == 1) || _LDSA)  begin // load A and Accumulator in.
             in1 = Aout;
             in2 = ACCout;
@@ -173,7 +172,8 @@ module AeolusCPUTop (
 
     // accumulator
     wire [7:0] ACCout;
-    ResetDFF ACC (clk, _CLR || reset, aluOut, ACCout); defparam ACC.DATA_WIDTH = 8;
+    wire enableALU = _CLR || _ADD ||_SUB ||_LSH||_RSH;
+    ResetEnableDFF ACC (clk, _CLR || reset, enableALU ,aluOut, ACCout); defparam ACC.DATA_WIDTH = 8;
 
     // output of the whole CPU
     always @(*) begin
