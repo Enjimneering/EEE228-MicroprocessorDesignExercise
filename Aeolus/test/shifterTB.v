@@ -35,7 +35,30 @@ module ShifterTb();
 
         #10 LOAD_ENABLE = 1;
         $display("LDS TEST");
-        for (i = 0; i < 16 ; i = i + 1) begin
+        i = 4'b0010;
+        #5  {IN1} = i[3:0];
+        
+        $display("RSH TEST");
+        #10 RSH = 1;
+        #5  `assert({uut.dataReg}, (4'b0001));
+        #5  `assert({FLAG}, (0));
+        
+        $display("RSH TEST");
+        #10 RSH = 1;
+        #5  `assert({uut.dataReg}, (4'b0000));
+        #5  `assert({FLAG}, (1));
+        
+        #10 LOAD_ENABLE = 1;
+        $display("LDS TEST");
+        i = 4'b0010;
+        #5  {IN1} = i[3:0];
+
+
+
+
+
+        for (i = 0; i < 16 ; i = i + 1) 
+        begin
             #5  {IN1} = i[3:0];
             #5  `assert({uut.dataReg}, (i[3:0]));  // assert that the result is the shift
         end
