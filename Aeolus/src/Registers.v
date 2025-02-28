@@ -189,7 +189,7 @@ module ShiftRegister (
     input wire [3:0] in,
     input wire       loadEnable,
     input wire [1:0] shiftState,
-    output reg [3:0] out,
+    output reg [7:0] out,
     output reg       flag
 );
 
@@ -205,7 +205,7 @@ module ShiftRegister (
                 else if (~loadEnable)begin
         
                     if (shiftState == 2'b10) begin   //LSH
-                        out <= {out[2:0],1'b0};
+                        out <=  out << 1;
                         flag <= flag;
                     end
 

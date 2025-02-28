@@ -85,6 +85,13 @@ module AeolusCPUTop (
     wire [3:0] Aout, Bout;
     wire [7:0] Oout;
 
+    //synch reset for regs
+    
+    always @(posedge clk) begin
+
+
+    end
+
     RegisterFile rf (
         .clk(clk),
         .reset(reset),
@@ -99,45 +106,77 @@ module AeolusCPUTop (
         .Oout(Oout)
     );
 
-    // ALU Instructions Control Signals
-
+    //shift Instructions/ Control Singals
     wire LSR, _LDSA, _LDSB;         // Load shift register
     assign _LSR = _LDSA || _LDSB;
-
     wire _LSR, _LSH, _RSH;          // Shift
-    wire _ADD, _SUB;                // Arithmetic
-    wire _AND, _OR, _XOR, _INV;     // Logical Instruction
+
+
+    // MUX for Shift Register Inputs 
+
+    always @(*) begin
+        if (_LDSA) begin
+           shiftIn = Aout;
+        end else if (_LDSB) begin
+           shiftIn = Bout;
+        end else begin
+           shiftIn = 0 ;
+        end
+    end
+
+    //  Shifter
+    reg [3:0] shiftIn;
+    wire [7:0] shiftOut;
+    wire SF;
+    //reg _shiftFlag;
+
+    ShiftRegister sr (clk, reset, shiftIn, _LSR, {_LSH,_RSH}, shiftOut, SF);
+
+
+    // ALU Instructions Control Signals
 
     // ALU control flags
     reg _ADDin;
-    reg _shiftFlag;
-    wire SF;
+
+    always @(*) begin 
+
+        if ((_SNZA | _SNZS)) begin
+            
+            if (SF == 1)
+                _ADDin = 1;
+            end else begin
+                _ADDin = _ADD;
+            end
+
+
+    end 
+
+
+    wire _ADD, _SUB;                // Arithmetic
+    wire _AND, _OR, _XOR, _INV;     // Logical Instruction
+
 
     // ALU inputs
-    reg [3:0] in1;
-    reg [3:0] in2;
+    reg [7:0] in1;
+    reg [7:0] in2;
+
 
     // MUX for ALU inputs , depends on control signals .
     // e.g (SNZA, SNZB, LDSA and LDSB require different inputs.
-
     always @(*) begin 
-        
-        _shiftFlag = SF;
 
-        // Instructions involving addition (SNZ and ADD)
-        if ((_SNZA | _SNZS) && _shiftFlag == 1) begin
-            _ADDin = 1;
-        end else begin
-            _ADDin = _ADD;
-        end
-        if ((_SNZA == 1  && _shiftFlag == 1) || _LDSA)  begin // load A and Accumulator in.
+        // set ALU inputs
+        if ((_SNZA == 1  && SF == 1) || _LDSA)  begin // load A and Accumulator in.
             in1 = Aout;
             in2 = ACCout;
+       
         end else if (_LDSB) begin // load B into shift reg
             in1 = Bout;
-        end else if ((_SNZS == 1 && _shiftFlag == 1)) begin
-            in1 = alu.shiftOut;
+
+        end else if ((_SNZS == 1 && SF == 1)) begin
+            in1 = shiftOut;
             in2 = ACCout;
+
         end else begin // non conditional instructinos
             in1 = Aout;
             in2 = Bout;
@@ -145,7 +184,7 @@ module AeolusCPUTop (
 
     end 
 
-    wire       OF; 
+    wire        OF; 
     wire       _CLR;
     wire [7:0] aluOut;
 
@@ -172,8 +211,10 @@ module AeolusCPUTop (
 
     // accumulator
     wire [7:0] ACCout;
-    wire enableALU = _CLR || _ADD ||_SUB ||_LSH||_RSH;
-    ResetEnableDFF ACC (clk, _CLR || reset, enableALU ,aluOut, ACCout); defparam ACC.DATA_WIDTH = 8;
+    
+    wire enableALU = _CLR || _ADDin || _SUB;
+
+    ResetEnableDFF ACC (clk, _CLR || reset, enableALU , aluOut, ACCout); defparam ACC.DATA_WIDTH = 8;
 
     // output of the whole CPU
     always @(*) begin

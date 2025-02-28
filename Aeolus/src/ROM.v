@@ -237,11 +237,11 @@ module ProgramROMtest (  // Rom built for specific test case
             end
 
             7: begin
-                 dataOut = 4'b0101; //LSH
+                 dataOut = 4'b0101;  //LSH
             end
 
             8: begin
-                 dataOut = 4'b1010; //SNZ S
+                 dataOut = 4'b1001; //SNZ S
             end
 
             9: begin
@@ -273,7 +273,7 @@ module ProgramROMtest (  // Rom built for specific test case
             end
 
             16: begin
-                 dataOut = 4'b1010; //SNZ S
+                 dataOut = 4'b1001; //SNZ S
             end
 
             17: begin
@@ -313,7 +313,7 @@ module ProgramROMtest (  // Rom built for specific test case
             end
 
             26: begin
-                 dataOut = 4'b1010; //SNZS
+                 dataOut = 4'b1001; //SNZS
             end
 
             27: begin
