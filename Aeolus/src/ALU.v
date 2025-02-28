@@ -41,8 +41,6 @@ module ArithmeticLogicUnit (
     wire [3:0] xorOut;
     wire [3:0] notOut;
 
-    ShiftRegister           sr    (clk, reset, in1[3:0], LSR, {LSH,RSH}, shiftOut, shiftFlag);
-
     CombAdder           adder      (in1, in2, adderOut, adderOverflowFlag); defparam adder.DATA_WIDTH=8;
     CombSubtractor      subtractor (in1, in2, subtractorOut, subtractorOverflowFlag); defparam subtractor.DATA_WIDTH=8;
 
@@ -100,52 +98,6 @@ module ArithmeticLogicUnit (
 
 endmodule
 
-
-module ShiftRegister ( // sequential shift register with mux for inputs - flag implimented for RSH underflow
-    input wire       clk,
-    input wire       reset,
-    input wire [3:0] in,
-    input wire       loadEnable,
-    input wire [1:0] shiftState,
-    output reg [3:0] out,
-    output reg       flag
-);
-
-    always @(posedge clk) begin
-       
-       if (~reset) begin
-            
-               if (loadEnable) begin
-                    out <= in;
-                    flag <= flag;
-                end
-
-                else if (~loadEnable)begin
-        
-                    if (shiftState == 2'b10) begin   //LSH
-                        out <= {out[2:0],1'b0};
-                        flag <= flag;
-                    end
-
-                    else if (shiftState == 2'b01) begin // RSH
-                        out <= {1'b0, out[3:1]};
-                        flag <= out[0]; // LSB of RSH is the flag (underflow)
-                    end
-
-                    else if (~(shiftState[0] ^ shiftState[1])) begin // no instructino
-                        out <= out;
-                        flag <= flag;
-                    end
-                end
-
-        end else begin// reset logic   
-            out <= 0;
-            flag <= 0;
-        end
-
-    end
-
-endmodule
 
 module FullAdder (
     input wire in1,
