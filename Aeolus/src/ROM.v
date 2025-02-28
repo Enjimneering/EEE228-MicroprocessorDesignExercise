@@ -104,7 +104,6 @@ module ProgramROM2 (  // Rom built for specific test case
                  dataOut = 4'b1010; //ADD
             end
 
-            
             3: begin
                  dataOut = 4'b0010; //LDO
             end
@@ -136,10 +135,11 @@ module ProgramROM2 (  // Rom built for specific test case
 endmodule
 
 module ProgramROM3  ( // Conditional Test
-    input  wire [3:0] addressIn,
+    input  wire [ADDR_WIDTH-1:0] addressIn,
     output reg  [3:0] dataOut
 );
 
+    parameter ADDR_WIDTH = 4;
     always @(*) begin
 
         case (addressIn)
@@ -151,6 +151,10 @@ module ProgramROM3  ( // Conditional Test
                  dataOut = 4'b0011; //LDS A
             end
             
+            2: begin
+                 dataOut = 4'b0101; // LSH
+            end
+
             3: begin
                  dataOut = 4'b0101; // LSH
             end
@@ -159,21 +163,31 @@ module ProgramROM3  ( // Conditional Test
                  dataOut = 4'b0101; // LSH
             end
 
+            
             5: begin
-                 dataOut = 4'b0101; // LSH
+                 dataOut = 4'b0010; //LDO
             end
 
             6: begin
-                 dataOut = 4'b0110; //RSH
-            end
-
-            7: begin
-                 dataOut = 4'b1000; // SNZA
+                dataOut = 4'b0001; //LDB
             end
             
-            8: begin
-                 dataOut = 4'b0010; //LDO
+            7: begin 
+                 dataOut = 4'b0100; //LDS B
             end
+
+             8: begin
+                 dataOut = 4'b0110; // RSH
+            end
+
+            9: begin
+                 dataOut = 4'b0110; // RSH
+            end
+
+            10: begin
+                 dataOut = 4'b0010; // LDO
+            end
+
 
             default: begin
                 dataOut = 5'b0111; //CLR - basically a NOP operation.
@@ -205,14 +219,13 @@ module ProgramROMtest (  // Rom built for specific test case
             2: begin
                  dataOut = 4'b0100; //LDSB
             end
-
             
             3: begin
                  dataOut = 4'b0110; //RSH
             end
 
             4: begin
-                 dataOut = 4'b1000; //SNZA
+                 dataOut = 4'b1000; //SNZ A
             end
 
             5: begin
@@ -228,7 +241,7 @@ module ProgramROMtest (  // Rom built for specific test case
             end
 
             8: begin
-                 dataOut = 4'b1000; //SNZA
+                 dataOut = 4'b1010; //SNZ S
             end
 
             9: begin
@@ -260,7 +273,7 @@ module ProgramROMtest (  // Rom built for specific test case
             end
 
             16: begin
-                 dataOut = 4'b1000; //SNZA
+                 dataOut = 4'b1010; //SNZ S
             end
 
             17: begin
@@ -300,7 +313,7 @@ module ProgramROMtest (  // Rom built for specific test case
             end
 
             26: begin
-                 dataOut = 4'b1000; //SNZA
+                 dataOut = 4'b1010; //SNZS
             end
 
             27: begin

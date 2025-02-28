@@ -83,6 +83,8 @@ module EnableDFF_4bit(
 
 endmodule
 
+//Paramatreised width
+
 module EnableDFF(
     input wire clk,
     input wire enable,
@@ -110,10 +112,12 @@ module ResetEnableDFF ( // synchronous reset
     parameter DATA_WIDTH = 4;
 
     always @(posedge clk) begin
+
         if (~reset) begin
             if (enable) begin
                 Q <= D;
             end 
+
         end else begin // reset behaviour
             Q <= 0;
         end
@@ -176,3 +180,51 @@ module ResetDFF ( // synchronous reset, no enable
 endmodule
 
 
+// Shift Register
+// sequential shift register with mux for inputs - flag implimented for RSH underflow
+
+module ShiftRegister ( 
+    input wire       clk,
+    input wire       reset,
+    input wire [3:0] in,
+    input wire       loadEnable,
+    input wire [1:0] shiftState,
+    output reg [3:0] out,
+    output reg       flag
+);
+
+    always @(posedge clk) begin
+       
+       if (~reset) begin
+            
+               if (loadEnable) begin
+                    out <= in;
+                    flag <= flag;
+                end
+
+                else if (~loadEnable)begin
+        
+                    if (shiftState == 2'b10) begin   //LSH
+                        out <= {out[2:0],1'b0};
+                        flag <= flag;
+                    end
+
+                    else if (shiftState == 2'b01) begin // RSH
+                        out <= {1'b0, out[3:1]};
+                        flag <= out[0]; // LSB of RSH is the flag (underflow)
+                    end
+
+                    else if (~(shiftState[0] ^ shiftState[1])) begin // no instructino
+                        out <= out;
+                        flag <= flag;
+                    end
+                end
+
+        end else begin// reset logic   
+            out <= 0;
+            flag <= 0;
+        end
+
+    end
+
+endmodule

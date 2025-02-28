@@ -41,108 +41,109 @@ module ArithmeticLogicUnit (
     wire [3:0] xorOut;
     wire [3:0] notOut;
 
-    ShiftRegister       sr         (clk, in1, LSR, {LSH,RSH}, shiftOut, shiftFlag);
+    ShiftRegister           sr    (clk, reset, in1[3:0], LSR, {LSH,RSH}, shiftOut, shiftFlag);
 
     CombAdder           adder      (in1, in2, adderOut, adderOverflowFlag); defparam adder.DATA_WIDTH=8;
     CombSubtractor      subtractor (in1, in2, subtractorOut, subtractorOverflowFlag); defparam subtractor.DATA_WIDTH=8;
 
-    And_4bit            andGate    (in1, in2, andOut);
-    Or_4bit             orGate     (in1, in2, orOut);
-    Xor_4bit            xorGate    (in1, in2, xorOut);
-    Inv_4bit            notGate    (in1, notOut);
-
+    And_4bit            andGate    (in1[3:0], in2[3:0], andOut);
+    Or_4bit             orGate     (in1[3:0], in2[3:0], orOut);
+    Xor_4bit            xorGate    (in1[3:0], in2[3:0], xorOut);
+    Inv_4bit            notGate    (in1[3:0], notOut);
 
     always @(*) begin // mux for control signals - assumes they won't be sent together
     
+    if (~reset) begin
         // Arithmetic
         if (ADD) begin
             out = adderOut;
             overflow = adderOverflowFlag;
         end
 
-        if (SUB) begin
+        else if (SUB) begin
             out = subtractorOut;
             overflow = subtractorOverflowFlag;
         end
 
-        if (LSH) begin
-            out = shiftOut;
-        end
-
-        if (RSH) begin
-            out = shiftOut;
-        end
-
         // Logic
-        if (AND) begin
+        else if (AND) begin
             out =  andOut;
             overflow = 0; 
         end
 
-        if (OR) begin
+        else if (OR) begin
             out =  orOut;
             overflow = 0;
         end
 
-        if (XOR) begin
+        else if (XOR) begin
             out =  xorOut;
             overflow = 0;    
         end
 
-        if (INV) begin
+        else if (INV) begin
             out =  notOut;
             overflow = 0;    
         end
 
-        if (CLR) begin
+        else if (CLR) begin
             out =  0;
             overflow = 0;    
         end
-        
+            
+        end else begin
+            out = 0;
+            overflow = 0;
+        end
     end
+
 
 endmodule
 
 
-module ShiftRegister (  // sequential shift register (D type FF with Enable)
+module ShiftRegister ( // sequential shift register with mux for inputs - flag implimented for RSH underflow
     input wire       clk,
+    input wire       reset,
     input wire [3:0] in,
     input wire       loadEnable,
-    input      [1:0] shiftState,  //reg
+    input wire [1:0] shiftState,
     output reg [3:0] out,
     output reg       flag
 );
-   
-    wire [3:0] dataReg;
-    reg [3:0] shiftRegIn;
 
-    wire enableReg;
-    reg shift; 
-
-
-    EnableDFF_4bit Shifter (clk, enableReg, in, dataReg); // sequential load
-
-        always @(*) begin
-            case (shiftState)    // combinatorial output  
-                2: begin      // LSH
-                    {flag,out} = dataReg << 1;
-                    shiftRegIn = dataReg << 1;
-                    shift = 1;
-                end 
-                1: begin // RSH
-                    {flag,out} = dataReg >> 1;
-                    shiftRegIn = dataReg >> 1;
-                    shift = 1;
+    always @(posedge clk) begin
+       
+       if (~reset) begin
+            
+               if (loadEnable) begin
+                    out <= in;
+                    flag <= flag;
                 end
 
-                default begin  
-                    out = dataReg;
-                    shift = 0;
-                end 
-            endcase
-        end 
+                else if (~loadEnable)begin
+        
+                    if (shiftState == 2'b10) begin   //LSH
+                        out <= {out[2:0],1'b0};
+                        flag <= flag;
+                    end
 
-        assign enableReg = loadEnable | shift;
+                    else if (shiftState == 2'b01) begin // RSH
+                        out <= {1'b0, out[3:1]};
+                        flag <= out[0]; // LSB of RSH is the flag (underflow)
+                    end
+
+                    else if (~(shiftState[0] ^ shiftState[1])) begin // no instructino
+                        out <= out;
+                        flag <= flag;
+                    end
+                end
+
+        end else begin// reset logic   
+            out <= 0;
+            flag <= 0;
+        end
+
+    end
 
 endmodule
 
@@ -204,6 +205,7 @@ module SyncRippleCarryAdder_4bit (  // synchronous design, hierarchal desgin
 
 endmodule
 
+// paramatreised size for input/output
 
 module CombAdder (  // Conbinational, Behavioural Description
     input wire  [DATA_WIDTH - 1:0]  in1,
@@ -235,7 +237,8 @@ module CombSubtractor (  // Combinational - Behavioural Description
 endmodule
 
 
-// 4-bit adder
+// 4-bit Modules
+
 module CombAdder_4bit ( // Conbinational, Behavioural Description
     input wire  [3:0]  in1,
     input wire  [3:0]  in2,
@@ -302,11 +305,12 @@ module SyncSubtractor_4bit (  // Synchronous, Behavioural Descriptiion
 
 endmodule
 
+
 // Logic Unit Components
 
-/*         Logic Unit
-        /      |       \
-      AND      OR       XOR 
+/*            Logic Unit
+        /      |        |     \  
+      AND      OR       XOR    INV
 */
 
 
