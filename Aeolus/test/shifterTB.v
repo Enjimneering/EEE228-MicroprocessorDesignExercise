@@ -1,7 +1,21 @@
 // Shifter Testbench
 
 `timescale 1ns/1ns
-`include "src/ALU.v"
+`include "src/Registers.v"
+
+/*
+    Description:
+        This testbench tests the sequential shift register  outputs of the ALU by changing
+        the control signals and inputs going into the module, and making asseertions
+        on the alu output wire. 
+    Objectives:
+        Test Addition and Subtraction (with overflow/underflow)
+        Test AND, OR, XOR and INV functionality
+    Success Criteria:
+        The test results are visible in the console, if the prgram terminates with
+        an assertion error, then  at least one of the logical functions has been implimented 
+        incorrectly.
+*/
 
 `define assert(signal, value) if (signal !== value) begin  $display("ASSERTION FAILED in test %4b at time %0t ns : %m signal  !=  value expected: %5b, got: %5b", i[3:0], $time , value, signal); $finish;  end
 
@@ -18,7 +32,7 @@ module ShifterTb();
     
     integer i;
 
-    ShiftRegister uut (CLK,IN1,LOAD_ENABLE, {LSH,RSH}, OUT, FLAG);
+    ShiftRegister uut (CLK, RESET, IN1,LOAD_ENABLE, {LSH,RSH}, OUT, FLAG);
 
     initial begin
 
@@ -30,7 +44,7 @@ module ShifterTb();
         $display("4-Bit Shifter Test");
 
         //$display("   in1   |  in2     |  actual    |  expected");
-
+        
         // Test LDS
 
         #10 LOAD_ENABLE = 1;
