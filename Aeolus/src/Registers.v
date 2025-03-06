@@ -18,23 +18,14 @@ module RegisterFile (
     parameter OUTPUT_WIDTH = 8;
     parameter INPUT_WIDTH = 4;
 
-    reg [3:0] Ain, Bin;
 
-    always @(*) begin
-        if (reset) begin// asynch reset
-            Ain = 0;
-            Bin = 0;
-        end else begin
-            Ain = AIn;
-            Bin = BIn;
-        end   
-    end
-    
     // A register
-    EnableDFF_4bit RegA (clk, LDA, Ain, Aout);
-
+    ResetEnableDFF RegA (clk, reset, LDA, AIn, Aout);
+    defparam RegA.DATA_WIDTH = INPUT_WIDTH;
+    
     // B register
-    EnableDFF_4bit RegB (clk, LDB, Bin, Bout);
+    ResetEnableDFF RegB (clk, reset, LDB, BIn, Bout);
+    defparam RegA.DATA_WIDTH = INPUT_WIDTH;
 
     // O register
     EnableDFF RegO (clk, LDO, OIn, Oout);
@@ -43,12 +34,14 @@ module RegisterFile (
 
 endmodule
 
-// Register Templates
-module DFF_4bit ( //DFF used just for buffering signals
-    input wire clk,
-    input wire [3:0] D,
-    output reg [3:0] Q
+// Register Templates - paramaterised data widths
+
+module DFF (   // standard D-type Flip Flop 
+    input wire   clk,
+    input wire  [DATA_WIDTH-1:0]  D,
+    output reg  [DATA_WIDTH-1:0]  Q
 );
+    parameter DATA_WIDTH  = 4;
 
     always @(posedge clk) begin
             Q <= D;
@@ -56,42 +49,13 @@ module DFF_4bit ( //DFF used just for buffering signals
 
 endmodule
 
-module DFF (   //DFF used just for buffering signals
-    input wire clk,
-    input wire  D,
-    output reg  Q
-);
-
-    always @(posedge clk) begin
-            Q <= D;
-    end
-
-endmodule
-
-module EnableDFF_4bit(
-    input wire clk,
-    input wire enable,
-    input wire [3:0] D,
-    output reg [3:0] Q
-);
-
-    always @(posedge clk) begin
-        if (enable) begin
-            Q <= D;
-        end 
-    end
-
-endmodule
-
-//Paramatreised width
-
-module EnableDFF(
+module EnableDFF (  // DFF with enable 
     input wire clk,
     input wire enable,
     input wire [DATA_WIDTH-1:0] D,
     output reg [DATA_WIDTH-1:0] Q
 );
-    parameter DATA_WIDTH   = 4;
+    parameter DATA_WIDTH  = 4;
 
     always @(posedge clk) begin
         if (enable) begin
@@ -101,7 +65,7 @@ module EnableDFF(
 
 endmodule
 
-module ResetEnableDFF ( // synchronous reset
+module ResetEnableDFF ( // synchronous reset with enable
     input wire clk,
     input wire reset,
     input wire enable,
@@ -112,50 +76,10 @@ module ResetEnableDFF ( // synchronous reset
     parameter DATA_WIDTH = 4;
 
     always @(posedge clk) begin
-
-        if (~reset) begin
-            if (enable) begin
-                Q <= D;
-            end 
-
-        end else begin // reset behaviour
-            Q <= 0;
-        end
-    end
-
-endmodule
-
-module ResetEnableDFF_4bit( // synchronous reset
-    input wire clk,
-    input wire reset,
-    input wire enable,
-    input wire [3:0] D,
-    output reg [3:0] Q
-);
-    always @(posedge clk) begin
-        if (~reset) begin
-            if (enable) begin
-                Q <= D;
-            end 
-        end else begin // reset behaviour
-            Q <= 0;
-        end
-    end
-
-endmodule
-
-module ResetDFF_4bit ( // synchronous reset, no enable
-    input wire clk,
-    input wire reset,
-    input wire [3:0] D,
-    output reg [3:0] Q
-);
-
-    always @(posedge clk) begin
-        if (~reset) begin
+        if (reset) begin // Reset should be checked first
+            Q <= 0; 
+        end else if (enable) begin // Only update if enabled
             Q <= D;
-        end else begin // reset behaviour
-            Q <= 0;
         end
     end
 
@@ -179,11 +103,10 @@ module ResetDFF ( // synchronous reset, no enable
 
 endmodule
 
-
 // Shift Register
-// sequential shift register with mux for inputs - flag implimented for RSH underflow
+// register with mux for inputs - flag implimented for RSH underflow
 
-module ShiftRegister ( 
+module ShiftRegister ( // synchronous reset, with enable
     input wire       clk,
     input wire       reset,
     input wire [3:0] in,
