@@ -199,10 +199,91 @@ module ProgramROM3  ( // Conditional Test
 
 endmodule
 
+module InstructionROM (
+  input wire [ADDR_WIDTH-1:0] addressIn,
+  output reg  [3:0] dataOut
+);
+  parameter ADDR_WIDTH = 4;
+   
+   
+   always @(*) begin
+        case (addressIn)
+    
+            0: begin
+                dataOut = 0; //LDA
+            end
+
+            1: begin
+                dataOut = 1; //LDB
+            end
+
+            2: begin
+                 dataOut = 2; //LDSB
+            end
+            
+            3: begin
+                 dataOut = 3; //RSH
+            end
+
+            4: begin
+                 dataOut = 4; //SNZ A
+            end
+
+            5: begin
+                 dataOut = 5; //RSH
+            end
+
+            6: begin
+                 dataOut = 6; //LDSA
+            end
+
+            7: begin
+                 dataOut = 8;  //LSH
+            end
+
+            8: begin
+                 dataOut = 9; //SNZ S
+            end
+
+            9: begin
+                 dataOut = 10; //LDSB
+            end
+
+            10: begin
+                 dataOut = 11; //RSH
+            end
+
+            11: begin
+                 dataOut = 12; //RSH
+            end
+
+            12: begin
+                 dataOut = 13; //RSH
+            end
+
+            13: begin
+                 dataOut = 14; //LDSA
+            end
+
+            14: begin
+                 dataOut = 15; //LSH
+            end
+            
+            default : begin
+                 dataOut = 7; //CLR
+            end
+
+        endcase
+     end
+
+endmodule
+
+
 module ProgramROMtest (  // Rom built for specific test case 
     input  wire [ADDR_WIDTH-1:0] addressIn,
     output reg  [3:0] dataOut
 );
+    
     parameter ADDR_WIDTH = 8;
 
     always @(*) begin
