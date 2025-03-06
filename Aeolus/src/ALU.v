@@ -11,8 +11,6 @@
 */
 
 module ArithmeticLogicUnit (
-    input wire       clk,
-    input wire       reset,
     input            ADD,
     input            SUB,
     input wire       AND,
@@ -23,14 +21,11 @@ module ArithmeticLogicUnit (
     input wire [DATA_WIDTH-1:0] in1,
     input wire [DATA_WIDTH-1:0] in2, 
     output reg [DATA_WIDTH-1:0] out,
-    output reg       overflow,
-    output wire      shiftFlag
+    output reg       overflow
 
 );
-
     parameter DATA_WIDTH = 8;
 
-    wire [3:0] shiftOut;
     wire [7:0] adderOut, subtractorOut;
     wire adderOverflowFlag, subtractorOverflowFlag;
     wire [3:0] andOut;
@@ -47,19 +42,20 @@ module ArithmeticLogicUnit (
     Inv_4bit            notGate    (in1[3:0], notOut);
 
     always @(*) begin // mux for control signals - assumes they won't be sent together
-    
-    if (~reset) begin
-        // Arithmetic
+        
+        out = 0; // is this correct?
+        overflow = 0; // is this correct
+        
         if (ADD) begin
             out = adderOut;
             overflow = adderOverflowFlag;
         end
-
+        
         else if (SUB) begin
             out = subtractorOut;
             overflow = subtractorOverflowFlag;
         end
-
+        
         // Logic
         else if (AND) begin
             out =  andOut;
@@ -86,13 +82,8 @@ module ArithmeticLogicUnit (
             overflow = 0;    
         end
             
-        end else begin
-            out = 0;
-            overflow = 0;
-        end
-    end
-
-
+     end
+     
 endmodule
 
 
@@ -104,53 +95,6 @@ module FullAdder (
     output  carryOut
 );
     assign {carryOut,sum} = in1 + in2; // behavioural description
-
-endmodule
-
-// ripple carry adder 4-bits - not verified
-module SyncRippleCarryAdder_4bit (  // synchronous design, hierarchal desgin
-    input wire         clk,
-    input wire         reset,
-    input wire  [3:0]  in1,
-    input wire  [3:0]  in2,
-    output reg  [3:0]  out,
-    output reg         overflow
-);
-    wire carry1,carry2,carry3,carry4;
-    reg c1, c2, c3;
-
-    wire o0, o1, o2, o3;
-
-    FullAdder f1 (in1[0], in2[0], 1'b0, o0, carry1);
-    FullAdder f2 (in1[1], in2[1], c1,   o1, carry2);
-    FullAdder f3 (in1[2], in2[2], c2,   o2, carry3);
-    FullAdder f4 (in1[3], in2[3], c3,   o3, carry4);
-
-    always @(posedge clk) begin
-        if (~reset) begin
-            c1 <= carry1;
-            c2 <= carry2;
-            c3 <= carry3;
-
-            out[0] <= o0;
-            out[1] <= o1;
-            out[2] <= o2;
-            out[3] <= o3;
-            overflow <= carry4;
-        
-        end else begin
-            c1 <= 0;
-            c2 <= 0;
-            c3 <= 0;
-
-            out[0] <= 0;
-            out[1] <= 0;
-            out[2] <= 0;
-            out[3] <= 0;
-            overflow <= 0;
-        end
-
-    end
 
 endmodule
 
@@ -170,7 +114,6 @@ module CombAdder (  // Conbinational, Behavioural Description
 
 endmodule
 
-//  4-bit Subtractor
 module CombSubtractor (  // Combinational - Behavioural Description
     input wire  [DATA_WIDTH - 1:0]  in1,
     input wire  [DATA_WIDTH - 1:0]  in2,
@@ -185,74 +128,6 @@ module CombSubtractor (  // Combinational - Behavioural Description
 
 endmodule
 
-
-// 4-bit Modules
-
-module CombAdder_4bit ( // Conbinational, Behavioural Description
-    input wire  [3:0]  in1,
-    input wire  [3:0]  in2,
-    output reg  [3:0]  out,
-    output reg         overflow  
-);
-
-    always @(*) begin
-        {overflow, out} = in1 + in2;
-    end
-
-endmodule
-
-//  4-bit Subtractor
-module CombSubtractor_4bit (  // Combinational - Behavioural Description
-    input wire  [3:0]  in1,
-    input wire  [3:0]  in2,
-    output reg  [3:0]  out,
-    output reg        overflow  
-);
-
-    always @(*) begin
-        {overflow, out} = in1 - in2;
-    end
-
-endmodule
-
-// 4-bit Adder
-module SyncAdder_4bit (  // Synchronous, Behavioural Descriptiion
-    input wire         clk,
-    input wire         reset,
-    input wire  [3:0]  in1,
-    input wire  [3:0]  in2,
-    output reg  [3:0]  out,
-    output reg         overflow  // what does this represent in a subtractionn?
-);
-    always @(posedge clk) begin
-        if (~reset) begin
-            {overflow, out} = in1 + in2;
-        end else begin
-            out = 0;
-        end
-    end 
-
-endmodule
-
-//4-bit Subtractor
-module SyncSubtractor_4bit (  // Synchronous, Behavioural Descriptiion
-    input wire         clk,
-    input wire         reset,
-    input wire  [3:0]  in1,
-    input wire  [3:0]  in2,
-    output reg  [3:0]  out,
-    output reg         overflow  // what does this represent in a subtractionn?
-);
-
-    always @(posedge clk ) begin
-        if (~reset) begin
-            {overflow, out} = in1 - in2;
-        end else begin
-            out = 0;
-        end
-    end 
-
-endmodule
 
 
 // Logic Unit Components
