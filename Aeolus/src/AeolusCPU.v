@@ -103,23 +103,13 @@ module AeolusCPUTop (
     );
 
     //shift Instructions/ Control Singals
-    wire _LSR, _LDSA, _LDSB;         // Load shift register
-    assign _LSR = _LDSA ||_LDSB;
-    
-    wire _LSH, _RSH;                // Shift control signals
+    wire _LDSA, _LDSB;              // Load shift register
    
     // MUX for Shift Register Inputs 
-    always @(*) begin
-        if (_LDSA) begin
-           shiftIn = Aout;
-        end else if (_LDSB) begin
-           shiftIn = Bout;
-        end else begin
-           shiftIn = 0 ;
-        end
-    end
-
+    SR_MUX srmux (_LDSA, _LDSB, Aout, Bout, ShiftIn);
+    
     //  Shifter
+    wire _LSH, _RSH;                // Shift control sig
     reg  [INPUT_DATA_WIDTH-1:0]  shiftIn;
     wire [OUTPUT_DATA_WIDTH-1:0] shiftOut;
     wire SF;
@@ -130,15 +120,7 @@ module AeolusCPUTop (
     reg _ADDin;
 
     // MUX for addition control flag
-    always @(*) begin 
-
-        if ((_SNZA |_SNZS)) begin
-        if (SF == 1)_ADDin = 1;
-        else  _ADDin = _ADD;
-        end else begin
-            _ADDin = _ADD;
-        end
-    end 
+    ADD_MUX addmux (_ADD,_SNZA,_SNZS,SF,_ADDin);
 
     wire _ADD, _SUB;                // Arithmetic
     wire _AND, _OR, _XOR, _INV;     // Logical Instruction
@@ -149,23 +131,8 @@ module AeolusCPUTop (
 
     // MUX for ALU inputs , depends on control signals .
     // e.g (SNZA, SNZB, LDSA and LDSB require different inputs.
-    always @(*) begin 
 
-        // set ALU inputs
-        if ((_SNZA == 1  && SF == 1))  begin         // add ACC and Reg A .
-            in1 = Aout;
-            in2 = ACCout;
-
-        end else if ((_SNZS == 1 && SF == 1)) begin  // add ACC and Shifter
-            in1 = shiftOut;
-            in2 = ACCout;
-
-        end else begin // non conditional instructinos
-            in1 = Aout;
-            in2 = Bout;
-        end
-
-    end 
+    ALU_MUX alumux (_SNZA,_SNZS,SF,shiftOut,ACCout,Aout,Bout,in1,in2);
 
     // ACC inputs
     wire        OF; 
@@ -200,6 +167,11 @@ module AeolusCPUTop (
     always @(*) begin
         cpuOut = Oout;
     end
+
+endmodule
+
+
+
 
 endmodule
 
