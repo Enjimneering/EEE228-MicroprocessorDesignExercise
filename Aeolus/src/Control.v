@@ -77,4 +77,71 @@ module InstructionDecoder(
 
 endmodule
 
+// Multiplexers
 
+module SR_MUX (
+    input wire _LDSA,
+    input wire _LDSB,
+    input wire Aout,
+    input wire Bout,
+    output reg shiftIn
+);
+    always @(*) begin
+        if (_LDSA) begin
+           shiftIn = Aout;
+        end else if (_LDSB) begin
+           shiftIn = Bout;
+        end else begin
+           shiftIn = 0 ;
+        end
+    end
+endmodule
+
+module ADD_MUX (
+    input wire _ADD,
+    input wire _SNZA,
+    input wire _SNZS,
+    input wire SF,
+    output reg _ADDin
+);
+ 
+ always @(*) begin 
+
+        if ((_SNZA |_SNZS)) begin
+        if (SF == 1) _ADDin = 1;
+        else  _ADDin = _ADD;
+        end else begin
+            _ADDin = _ADD;
+        end
+    end 
+
+endmodule
+
+module ALU_MUX (
+    input wire _SNZA,
+    input wire SF,
+    input wire _SNZS,
+    input wire shiftOut,
+    input wire ACCout,
+    input wire Aout,
+    input wire Bout,
+    output reg in1,
+    output reg in2
+);
+
+    always @(*) begin 
+        // set ALU inputs
+        if ((_SNZA == 1  && SF == 1))  begin         // add ACC and Reg A .
+            in1 = Aout;
+            in2 = ACCout;
+
+        end else if ((_SNZS == 1 && SF == 1)) begin  // add ACC and Shifter
+            in1 = shiftOut;
+            in2 = ACCout;
+
+        end else begin // non conditional instructinos
+            in1 = Aout;
+            in2 = Bout;
+        end
+    end
+endmodule
