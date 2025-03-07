@@ -7,12 +7,12 @@ module clkDiv(
     output wire CLKout
     );
 
-    localparam COUNTER_SIZE = 64; 
-    localparam COUNTER_TARGET = 1;
+    parameter COUNTER_SIZE = 64; 
+    parameter COUNTER_TARGET = 1;
 
 // T(clkOut) / T(clkin) = Countersize / counter target
 
-    reg[COUNTER_SIZE - 1:0] counter = 0;
+  reg[COUNTER_SIZE - 1:0] counter = 0;
 
    always @(posedge CLKin) begin
         counter <= counter  + 1;
