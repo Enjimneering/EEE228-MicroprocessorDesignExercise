@@ -28,7 +28,7 @@ module RegisterFile (
     defparam RegA.DATA_WIDTH = INPUT_WIDTH;
 
     // O register
-    EnableDFF RegO (clk, LDO, OIn, Oout);
+    ResetEnableDFF RegO (clk, reset, LDO, OIn, Oout);
     defparam RegO.DATA_WIDTH = 8;
 
 

@@ -82,19 +82,23 @@ endmodule
 module SR_MUX (
     input wire _LDSA,
     input wire _LDSB,
-    input wire Aout,
-    input wire Bout,
-    output reg shiftIn
+    input wire [3:0] Aout,
+    input wire [3:0] Bout,
+    output reg [3:0] shiftIn,
+    output wire _LSR
 );
+    assign _LSR = _LDSA | _LDSB;
+
     always @(*) begin
         if (_LDSA) begin
            shiftIn = Aout;
         end else if (_LDSB) begin
            shiftIn = Bout;
         end else begin
-           shiftIn = 0 ;
+           shiftIn = 0;
         end
     end
+    
 endmodule
 
 module ADD_MUX (
@@ -110,6 +114,7 @@ module ADD_MUX (
         if ((_SNZA |_SNZS)) begin
         if (SF == 1) _ADDin = 1;
         else  _ADDin = _ADD;
+        
         end else begin
             _ADDin = _ADD;
         end
@@ -121,12 +126,12 @@ module ALU_MUX (
     input wire _SNZA,
     input wire SF,
     input wire _SNZS,
-    input wire shiftOut,
-    input wire ACCout,
-    input wire Aout,
-    input wire Bout,
-    output reg in1,
-    output reg in2
+    input wire [7:0] shiftOut,
+    input wire [7:0] ACCout,
+    input wire [3:0] Aout,
+    input wire [3:0] Bout,
+    output reg [7:0] in1,
+    output reg [7:0] in2
 );
 
     always @(*) begin 
@@ -145,3 +150,15 @@ module ALU_MUX (
         end
     end
 endmodule
+
+
+module ENABLE_ACC_MUX(
+    input wire  _AND, _OR, _XOR, _INV, _ADDin, _SUB, _CLR,
+    output wire enableACC
+);
+    wire logicSignal = _AND ||  _OR || _XOR || _INV;
+    wire arithmeticSignal = _ADDin || _SUB;
+    assign enableACC = _CLR || arithmeticSignal || logicSignal;  // alu needs to be enabled usign the relevant instruction
+
+endmodule
+

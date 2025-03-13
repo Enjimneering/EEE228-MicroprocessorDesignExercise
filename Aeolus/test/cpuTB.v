@@ -39,7 +39,7 @@ module CPUTb();
         $dumpfile("test/vcd/CPUadddump.vcd");
         $dumpvars(0, CPUTb);
         
-        CLK = 1; RESET = 1; SWITCHES[7:0] = 8'b0111_1000; 
+        CLK = 1; RESET = 1; SWITCHES[7:0] = 8'b1001_0010; 
         #15 RESET = 0;
         #3300 $display("program complete!"); $finish; 
     end

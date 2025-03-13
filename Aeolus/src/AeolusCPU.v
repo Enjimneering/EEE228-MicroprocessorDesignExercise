@@ -45,7 +45,7 @@ module AeolusCPUTop (
     // Program ROM
     wire [3:0] opcode;
     
-    InstructionROM rom ( .addressIn(PCout), .dataOut(opcode));
+    ProgramROMtest rom ( .addressIn(PCout), .dataOut(opcode));
     defparam rom.ADDR_WIDTH = ROM_ADDRESS_WIDTH;
     
     // Instruction Decoder
@@ -76,24 +76,14 @@ module AeolusCPUTop (
 
     wire [INPUT_DATA_WIDTH-1:0]  Aout, Bout;
     wire [OUTPUT_DATA_WIDTH-1:0] Oout;
-    reg  [OUTPUT_DATA_WIDTH-1:0] Oin;
-
-    // Synch reset for register file output 
-    always @(posedge clk) begin
-        if (~reset) begin
-            Oin = ACCout;
-        end else begin
-            Oin = 0;
-        end
-
-    end
+    wire  [OUTPUT_DATA_WIDTH-1:0] Oin;
 
     RegisterFile registerFile (
         .clk(clk),
         .reset(reset),
         .AIn(switches[7:4]),
         .BIn(switches[3:0]),
-        .OIn(Oin),
+        .OIn(ACCout),
         .LDA(_LDA),
         .LDB(_LDB),
         .LDO(_LDO),
@@ -105,34 +95,35 @@ module AeolusCPUTop (
     //shift Instructions/ Control Singals
     wire _LDSA, _LDSB;              // Load shift register
    
-    // MUX for Shift Register Inputs 
-    SR_MUX srmux (_LDSA, _LDSB, Aout, Bout, ShiftIn);
     
     //  Shifter
     wire _LSH, _RSH;                // Shift control sig
-    reg  [INPUT_DATA_WIDTH-1:0]  shiftIn;
+    wire  [INPUT_DATA_WIDTH-1:0]  shiftIn;
     wire [OUTPUT_DATA_WIDTH-1:0] shiftOut;
     wire SF;
+
+    // MUX for Shift Register Inputs 
+    SR_MUX srmux (_LDSA, _LDSB, Aout, Bout, shiftIn, _LSR);
 
     ShiftRegister sr (clk, reset, shiftIn, _LSR, {_LSH,_RSH}, shiftOut, SF);
 
     // ALU addition control flags 
-    reg _ADDin;
+    wire _ADDin;
 
     // MUX for addition control flag
-    ADD_MUX addmux (_ADD,_SNZA,_SNZS,SF,_ADDin);
+    ADD_MUX addmux (_ADD,_SNZA,_SNZS, SF, _ADDin);
 
     wire _ADD, _SUB;                // Arithmetic
     wire _AND, _OR, _XOR, _INV;     // Logical Instruction
 
     // ALU inputs
-    reg [OUTPUT_DATA_WIDTH-1:0] in1;
-    reg [OUTPUT_DATA_WIDTH-1:0] in2;
+    wire [OUTPUT_DATA_WIDTH-1:0] in1;
+    wire [OUTPUT_DATA_WIDTH-1:0] in2;
 
     // MUX for ALU inputs , depends on control signals .
     // e.g (SNZA, SNZB, LDSA and LDSB require different inputs.
 
-    ALU_MUX alumux (_SNZA,_SNZS,SF,shiftOut,ACCout,Aout,Bout,in1,in2);
+    ALU_MUX alumux (_SNZA,_SNZS, SF ,shiftOut,ACCout,Aout,Bout,in1,in2);
 
     // ACC inputs
     wire        OF; 
@@ -156,22 +147,16 @@ module AeolusCPUTop (
 
     // Accumulator (ACC)
     wire [OUTPUT_DATA_WIDTH-1:0] ACCout;
-    wire logicSignal = _AND ||  _OR || _XOR || _INV;
-    wire arithmeticSignal = _ADDin || _SUB;
-    wire enableALU = _CLR || arithmeticSignal || logicSignal;  // alu needs to be enabled usign the relevant instruction
+    
+    ENABLE_ACC_MUX accmux ( _AND, _OR, _XOR, _INV, _ADDin, _SUB, _CLR, enableACC);
 
-    ResetEnableDFF ACC (clk, _CLR || reset, enableALU , aluOut, ACCout); 
+    ResetEnableDFF ACC (clk, _CLR || reset, enableACC , aluOut, ACCout); 
     defparam ACC.DATA_WIDTH = OUTPUT_DATA_WIDTH;
 
     // CPU Output
     always @(*) begin
         cpuOut = Oout;
     end
-
-endmodule
-
-
-
 
 endmodule
 
