@@ -27,7 +27,7 @@ module CPUsocket (
     end 
     
     always @(*) begin
-        case (DigitSelect)
+        case (DigitSelect)        // Todo: link this so that from Left to right it goes - 
             0: SevenSegmentChar = 0;
             1: SevenSegmentChar = 0;
             2: SevenSegmentChar = 0;
