@@ -1,8 +1,50 @@
-`include "src/util/headers/SevenSegChars.vh"
+//4-bit input number and outputs the corresponding seven-segment display 
+`ifndef SEG7MACROS
+`define SEG7MACROS
+
+`define CHAR_A 7'b0001000
+`define CHAR_B 7'b1100000
+`define CHAR_C 7'b1001110
+`define CHAR_D 7'b1000010
+`define CHAR_E 7'b0000110
+`define CHAR_F 7'b0001110
+`define CHAR_G 7'b1000010
+`define CHAR_H 7'b0001001
+`define CHAR_I 7'b1001111
+`define CHAR_J 7'b1100011
+`define CHAR_K 7'b0001001
+`define CHAR_L 7'b1001111
+`define CHAR_M 7'b0101010
+`define CHAR_N 7'b1101010
+`define CHAR_O 7'b0000001
+`define CHAR_P 7'b0001100
+`define CHAR_Q 7'b0001000
+`define CHAR_R 7'b1101010
+`define CHAR_S 7'b0010010
+`define CHAR_T 7'b0001111
+`define CHAR_U 7'b1000001
+`define CHAR_V 7'b1011001
+`define CHAR_W 7'b1000000
+`define CHAR_X 7'b0101010
+`define CHAR_Y 7'b0010001
+`define CHAR_Z 7'b0100100
+`define CHAR_ZERO 7'b0000001
+`define CHAR_ONE 7'b1001111
+`define CHAR_TWO 7'b0010010
+`define CHAR_THREE 7'b0000110
+`define CHAR_FOUR 7'b1001100
+`define CHAR_FIVE 7'b0100100
+`define CHAR_SIX 7'b0100000
+`define CHAR_SEVEN 7'b0001111
+`define CHAR_EIGHT 7'b0000000
+`define CHAR_NINE 7'b0000100
+`define CHAR_SPACE 7'b1111111 
+      
+`endif
 
 module HexDigitDecoder_SEG7 (
     input wire [3:0] num,
-    output reg segments
+    output reg [6:0] segments
 );
     
     always @(*) begin
@@ -30,6 +72,7 @@ module HexDigitDecoder_SEG7 (
 
 endmodule
 
+//displays opcode mnemonics on a 4-digit seven-segment display
 module OpcodeDisplay_SEG7 (
     input wire [3:0] opcode,      // 4-bit opcode input
     output reg [6:0] digit1,      // Leftmost 7-segment display
