@@ -2,19 +2,14 @@
 `include "Control.v"
 `include "ROM.v"
 
-//  Done:
-//        impliment the example ROM.
-//        test example program
-
-//  Both:
+//  todo: Paramaterise all bus lenghts
 //  todo: comment and document the design so far.
 //  todo: write test benches and sign off on:
     //  conditional instructions
     //  shift flag/ L/RSH Results
     //  all register types
-
 //  Extension Tasks - develop an extended instruction set for graphics  (w/ NOP)
-//  Extension Tasks - develop a multi-cycle version (logic reduction)
+//  Extension Tasks - develop a multi-cycle version of the cpu (logic reduction)
 //  Extension Tasks - develop a pipelined version
 
 module AeolusCPUTop (
@@ -29,28 +24,30 @@ module AeolusCPUTop (
     parameter OUTPUT_DATA_WIDTH = 8;
 
     // Clock divider 
+    // Optionally splits the board clocck into a lower frequency
     clkDiv clkdiv(  .CLKin(boardCLK), .CLKout(clk) );
 
-    // Program Counter 
-    wire [ROM_ADDRESS_WIDTH-1:0] PCin;
-    wire [ROM_ADDRESS_WIDTH-1:0] PCout;
-
+    wire [ROM_ADDRESS_WIDTH-1:0] PCin;   // Next address to be decoded
+    wire [ROM_ADDRESS_WIDTH-1:0] PCout;  // Current address being decoded
+    
+    // Program Counter
+    // Outputs the address of the instruction being executed and increments every clk cycle
     ResetEnableDFF PC (clk, reset, 1'b1 , PCin, PCout);
     defparam PC.DATA_WIDTH = ROM_ADDRESS_WIDTH;
    
     // Incrementer
+    // Incrememnts the program counter
     CombAdder inc (PCout, 8'b0000_0001, PCin , PCoverflow); 
     defparam inc.DATA_WIDTH = ROM_ADDRESS_WIDTH;
 
     // Program ROM
-    wire [3:0] opcode;
-    
+    // Stores the program  
     ProgramROMtest rom ( .addressIn(PCout), .dataOut(opcode));
     defparam rom.ADDR_WIDTH = ROM_ADDRESS_WIDTH;
+    wire [3:0] opcode; // Current opcode being executed - output from instruction ROM 
     
     // Instruction Decoder
-    // opcode in -> control signal out
-    
+    // Decodes the opcode from the program rom and outputs the appropriate control signalsß
     InstructionDecoder decoder (
         .instructionIn(opcode),
         .LDA  (_LDA),
@@ -71,13 +68,12 @@ module AeolusCPUTop (
         .INV  (_INV)
     );
 
-    // Regsiter File 
-    // contains A reg and B reg and O reg
-
     wire [INPUT_DATA_WIDTH-1:0]  Aout, Bout;
     wire [OUTPUT_DATA_WIDTH-1:0] Oout;
     wire  [OUTPUT_DATA_WIDTH-1:0] Oin;
 
+    // Regsiter File 
+    // Contains A reg and B reg and O reg
     RegisterFile registerFile (
         .clk(clk),
         .reset(reset),
@@ -93,22 +89,20 @@ module AeolusCPUTop (
     );
 
     //shift Instructions/ Control Singals
-    wire _LDSA, _LDSB;              // Load shift register
-   
-    
-    //  Shifter
-    wire _LSH, _RSH;                // Shift control sig
-    wire  [INPUT_DATA_WIDTH-1:0]  shiftIn;
+    wire _LDSA, _LDSB;                      // Load shift register
+    wire _LSH, _RSH;                        // Shift Control signals
+    wire [INPUT_DATA_WIDTH-1:0]  shiftIn;
     wire [OUTPUT_DATA_WIDTH-1:0] shiftOut;
-    wire SF;
+    wire SF;                                // Shift Flag
 
     // MUX for Shift Register Inputs 
     SR_MUX srmux (_LDSA, _LDSB, Aout, Bout, shiftIn, _LSR);
 
+    // Shifter
+    // Register for implimenting shift instructions and storing the results
     ShiftRegister sr (clk, reset, shiftIn, _LSR, {_LSH,_RSH}, shiftOut, SF);
 
-    // ALU addition control flags 
-    wire _ADDin;
+    wire _ADDin; // ALU addition control flag
 
     // MUX for addition control flag
     ADD_MUX addmux (_ADD, _SNZA,_SNZS, SF, _ADDin);
@@ -125,10 +119,6 @@ module AeolusCPUTop (
 
     ALU_MUX alumux (_SNZA, _SNZS, SF ,shiftOut, ACCout, Aout, Bout, in1,in2);
 
-    // ACC inputs
-    wire        OF; 
-    wire       _CLR;
-    wire [OUTPUT_DATA_WIDTH-1:0] aluOut;
 
     // Arithmetic Logic Unit (combintorial)
     ArithmeticLogicUnit alu( 
@@ -144,12 +134,18 @@ module AeolusCPUTop (
         .out(aluOut),
         .overflow(OF)
     );
+    
+    // Logic to enable the Accumulator 
+    ENABLE_ACC_MUX accmux ( _AND, _OR, _XOR, _INV, _ADDin, _SUB, _CLR, enableACC);
+    wire [OUTPUT_DATA_WIDTH-1:0] ACCout;
+
+    // Accumulator Input 
+    wire        OF; 
+    wire       _CLR;
+    wire [OUTPUT_DATA_WIDTH-1:0] aluOut;
 
     // Accumulator (ACC)
-    wire [OUTPUT_DATA_WIDTH-1:0] ACCout;
-    
-    ENABLE_ACC_MUX accmux ( _AND, _OR, _XOR, _INV, _ADDin, _SUB, _CLR, enableACC);
-
+    // Stores the results of Arithmetic or Logical operations
     ResetEnableDFF ACC (clk, _CLR || reset, enableACC , aluOut, ACCout); 
     defparam ACC.DATA_WIDTH = OUTPUT_DATA_WIDTH;
 

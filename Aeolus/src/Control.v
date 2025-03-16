@@ -1,50 +1,28 @@
 // Control Modules
 
-// CLK Div to create system CLK 
+// Clock divider module to lower clock frequency
 
 module clkDiv(
     input wire CLKin,
     output wire CLKout
-    );
-
+);
+    
     parameter COUNTER_SIZE = 64; 
     parameter COUNTER_TARGET = 1;
 
-// T(clkOut) / T(clkin) = Countersize / counter target
+    reg[COUNTER_SIZE - 1:0] counter = 0;
 
-  reg[COUNTER_SIZE - 1:0] counter = 0;
-
-   always @(posedge CLKin) begin
+    always @(posedge CLKin) begin
         counter <= counter  + 1;
-   end
+    end
 
+   // Output frequency = f(CLKin) / log2(COUNTER_TARGET - 1)
    assign CLKout = counter[COUNTER_TARGET];
 
 endmodule
 
-module Counter_2bit(
-    input            clk,
-    input            reset,
-    input            enable,
-    output reg [1:0] value
-);
-
-    always @(posedge clk ) begin
-        if (~reset) begin
-            if (enable) begin
-                value <= value + 1;   
-            end
-        end else begin
-            value <= 0;
-        end
-      
-    end
-
-
-endmodule
 
 // Instruction Decoder to map opcodes to control signals.
-// 1762
 
 module InstructionDecoder(
     input  [3:0] instructionIn,
@@ -80,12 +58,12 @@ endmodule
 // Multiplexers
 
 module SR_MUX (
-    input wire _LDSA,
-    input wire _LDSB,
+    input wire       _LDSA,
+    input wire       _LDSB,
     input wire [3:0] Aout,
     input wire [3:0] Bout,
     output reg [3:0] shiftIn,
-    output wire _LSR
+    output wire      _LSR
 );
     assign _LSR = _LDSA | _LDSB;
 
@@ -123,9 +101,9 @@ module ADD_MUX (
 endmodule
 
 module ALU_MUX (
-    input wire _SNZA,
-    input wire _SNZS,
-    input wire SF,
+    input wire       _SNZA,
+    input wire       _SNZS,
+    input wire       SF,
     input wire [7:0] shiftOut,
     input wire [7:0] ACCout,
     input wire [3:0] Aout,
