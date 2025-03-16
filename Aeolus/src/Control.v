@@ -124,8 +124,8 @@ endmodule
 
 module ALU_MUX (
     input wire _SNZA,
-    input wire SF,
     input wire _SNZS,
+    input wire SF,
     input wire [7:0] shiftOut,
     input wire [7:0] ACCout,
     input wire [3:0] Aout,

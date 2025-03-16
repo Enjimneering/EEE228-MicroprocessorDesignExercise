@@ -1,0 +1,6 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1742129726" />
+    <testcase name="TestMultiplication" classname="test" file="/Users/macbook/Documents/GitHub/EEE2228-MicrocontrollerDesignExercise/Aeolus/test/cocotb/test.py" lineno="24" time="18.122323989868164" sim_time_ns="65282000.001" ratio_time="3602297.3674622467" />
+  </testsuite>
+</testsuites>

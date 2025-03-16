@@ -1,6 +1,6 @@
-`include "src/ALU.v"
-`include "src/Control.v"
-`include "src/ROM.v"
+`include "ALU.v"
+`include "Control.v"
+`include "ROM.v"
 
 //  Done:
 //        impliment the example ROM.
@@ -111,7 +111,7 @@ module AeolusCPUTop (
     wire _ADDin;
 
     // MUX for addition control flag
-    ADD_MUX addmux (_ADD,_SNZA,_SNZS, SF, _ADDin);
+    ADD_MUX addmux (_ADD, _SNZA,_SNZS, SF, _ADDin);
 
     wire _ADD, _SUB;                // Arithmetic
     wire _AND, _OR, _XOR, _INV;     // Logical Instruction
@@ -123,7 +123,7 @@ module AeolusCPUTop (
     // MUX for ALU inputs , depends on control signals .
     // e.g (SNZA, SNZB, LDSA and LDSB require different inputs.
 
-    ALU_MUX alumux (_SNZA,_SNZS, SF ,shiftOut,ACCout,Aout,Bout,in1,in2);
+    ALU_MUX alumux (_SNZA, _SNZS, SF ,shiftOut, ACCout, Aout, Bout, in1,in2);
 
     // ACC inputs
     wire        OF; 
@@ -158,5 +158,9 @@ module AeolusCPUTop (
         cpuOut = Oout;
     end
 
+    initial begin
+        $dumpvars(0,AeolusCPUTop);
+        $dumpfile("dump.vcd");
+    end
 endmodule
 

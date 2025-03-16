@@ -14,7 +14,7 @@ module AdderTb();
     
     integer i;
 
-    CombAdder_4bit uut (IN1, IN2, OUT, OVERFLOW);
+    CombAdder uut (IN1, IN2, OUT, OVERFLOW);
 
     initial begin
 

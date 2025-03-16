@@ -1,6 +1,6 @@
 // Arithmetic Logic Unit
 
-`include "src/Registers.v"
+`include "Registers.v"
 
 // Arithmetic Unit Components
 /*
