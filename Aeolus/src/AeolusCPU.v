@@ -160,7 +160,6 @@ module AeolusCPUTop (
         cpuOut = Oout;
     end
 
-
     initial begin // dump output
         $dumpvars(0,AeolusCPUTop);
         $dumpfile("dump.vcd");
