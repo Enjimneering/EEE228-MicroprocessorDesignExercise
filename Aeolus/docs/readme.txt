@@ -54,7 +54,7 @@ Instruction Set List
 
 Architectural State Elements
 
-  A register =
+  A register 
   4-bit general purpose register, can be used as an ALU input.
 
   B register
@@ -62,5 +62,5 @@ Architectural State Elements
   
   ACC(umulator) register
   O(utput) register
+  Shift Register
   Shift flag
-  Overflow flag

@@ -2,15 +2,21 @@
 `include "Control.v"
 `include "ROM.v"
 
+// Development Tasks
 //  todo: Paramaterise all bus lenghts
 //  todo: comment and document the design so far.
-//  todo: write test benches and sign off on:
-    //  conditional instructions
-    //  shift flag/ L/RSH Results
-    //  all register types
-//  Extension Tasks - develop an extended instruction set for graphics  (w/ NOP)
-//  Extension Tasks - develop a multi-cycle version of the cpu (logic reduction)
-//  Extension Tasks - develop a pipelined version
+//  todo: write testbenches and sign off on:
+    //  Registers - DFF, ResetDFF, ResetEnableDFF
+    //  Shifter - Flag, LSH and RSH Results
+    //  Conditional instructions - SNZS, SNZA
+//  todo: develop FPGA TestSocket Modules (7-Seg)
+//  todo: reduce logic - ALU minimisation/component reuse
+
+//  Extension Tasks 
+    //  - develop a pipelined version of the CPU with extended instruction set (w/ NOP) for graphicsß
+    //  - Impliment Branches
+    //  - Impliment VGA
+    //  - Write Simple Graphics Demo
 
 module AeolusCPUTop (
     input wire       boardCLK,
@@ -154,7 +160,8 @@ module AeolusCPUTop (
         cpuOut = Oout;
     end
 
-    initial begin
+
+    initial begin // dump output
         $dumpvars(0,AeolusCPUTop);
         $dumpfile("dump.vcd");
     end
