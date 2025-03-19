@@ -1,6 +1,7 @@
 `include "ALU.v"
 `include "Control.v"
 `include "ROM.v"
+`timescale 1us/1ns
 
 // Development Tasks
 //  todo: Paramaterise all bus lenghts
@@ -161,8 +162,8 @@ module AeolusCPUTop (
     end
 
     initial begin // dump output
-        $dumpvars(0,AeolusCPUTop);
         $dumpfile("dump.vcd");
+        $dumpvars(0,AeolusCPUTop);
     end
 endmodule
 
