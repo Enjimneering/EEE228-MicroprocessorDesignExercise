@@ -13,7 +13,7 @@ module ShifterTb();
     reg        LOAD_ENABLE;
     reg        LSH;
     reg        RSH;
-    wire [3:0] OUT;
+    wire [7:0] OUT;
     wire       FLAG;
     
     reg  [3:0] D;
