@@ -10,6 +10,7 @@ TOPLEVEL_LANG ?= verilog
 
 VERILOG_SOURCES += $(ROOTPATH)/src/AeolusCPU.v
 VERILOG_INCLUDE_DIRS = $(ROOTPATH)/src
+
 # TOPLEVEL is the name of the toplevel module in your Verilog or VHDL file
 TOPLEVEL = AeolusCPUTop
 # MODULE is the basename of the Python test file
