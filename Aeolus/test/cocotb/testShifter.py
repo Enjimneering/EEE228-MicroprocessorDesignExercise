@@ -9,22 +9,49 @@ from cocoutil import GenerateClock, Reset, RunProgram, posedge
 #        [7:0] out, flag
 
 @cocotb.test()
-async def TestShifter(dut):
+async def TestShiftLoad(dut):
+    
+    # set initial input values
+    getattr(dut, "in").value = 0
+    dut.loadEnable.value = 1
+    dut.shiftState = 0
 
     await GenerateClock(dut)
     await Reset(dut)
-
+    
     for shiftTestValue in range(16):
             # set inputs
-            
-            print(f"ShiftTestValue: {shiftTestValue}")
-            # run program
             await posedge(dut.clk) 
-            await RunProgram(dut)
+            getattr(dut, "in").value =  shiftTestValue
 
-            # assert output
-            print(f"Output: {dut.out.value}")
-            assert dut.out.value == (ShiftTestValue )
-        
+            # measure output
+            await posedge(dut.clk) 
+            assert dut.out.value == shiftTestValue
+            print(f"in value: {getattr(dut, 'in').value}, out value: {dut.out.value}")
+            
+@cocotb.test()
+async def TestShiftLeft(dut):
 
+    await GenerateClock(dut)
+    await Reset(dut)
     
+    # set initial input values
+    getattr(dut, "in").value = 0
+    dut.loadEnable.value = 1
+    dut.shiftState = 2
+    
+    for shiftTestValue in range(16):
+            # set inputs
+            dut.loadEnable.value = 1
+            getattr(dut, "in").value =  shiftTestValue
+            
+            await posedge(dut.clk) 
+            dut.loadEnable.value = 0
+            await posedge(dut.clk)
+
+            # measure output
+            await posedge(dut.clk)
+            assert dut.out.value == ((shiftTestValue << 1) & 255)
+            await posedge(dut.clk)  
+            assert dut.out.value == ((shiftTestValue << 1) & 255)
+            print(f"in value: {getattr(dut, 'in').value}, out value: {dut.out.value}")     

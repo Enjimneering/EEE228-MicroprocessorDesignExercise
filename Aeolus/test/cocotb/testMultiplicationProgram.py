@@ -13,14 +13,14 @@ async def TestMultiplication(dut):
             
             # set inputs
             dut.switches.value = (regA<<4|regB)
-            print(f"A: {regA} B: {regB}")
+            #print(f"A: {regA} B: {regB}")
 
             # run program
-            await posedge(dut.clk) 
+            await posedge(dut.clk)
             await RunProgram(dut)
 
             # assert output
-            print(f"Output: {dut.cpuOut.value}")
+            # print(f"Output: {dut.cpuOut.value}")
             assert dut.cpuOut.value == (regA * regB)
         
 

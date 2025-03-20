@@ -150,4 +150,11 @@ module ShiftRegister ( // synchronous reset, with enable
 
     end
 
+   initial begin // dump output
+        $dumpfile("shifterdump.vcd");
+        $dumpvars(0, ShiftRegister);
+    end
+
+
+
 endmodule
