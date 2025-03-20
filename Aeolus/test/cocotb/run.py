@@ -14,157 +14,112 @@ inc_path = src_path
 
 # ==================================================== #
 
-def RunTest(_test_name, _src_file, _top_module, _test_file, _src_dir=src_path, _inc_dir=inc_path):
-    
-    print(f"Starting {_test_name}...")
-
-    verilog_filename = _src_file
-    verilog_file = _src_dir / verilog_filename
-    include_dirs = [str(_inc_dir)] 
-    vhdl_sources = []
-
-    # Check if the sources are valid before proceeding 
-    
-    Verify(src_path, inc_path, verilog_file, "")
-
-    # Get runner and run the build & test
-    
-    runner = get_runner(sim)
-
-    # Build the test environemnt
-    
-    runner.build(
-        verilog_sources=[str(verilog_file)],
-        includes=include_dirs,  # Ensure it's a list
-        vhdl_sources=vhdl_sources,
-        hdl_toplevel="_top_module",
-        timescale = ("1us","1ns"),
-        always=True,
-    )
-    
-    # Run the test 
-    
-    runner.test(hdl_toplevel=_top_module, test_module=_test_file)
-    
-    print(f"Finished {_test_name} !")
-
-#  ////////////////////////////////////////////////////////////////////////////// #
-
-
-#  Test: Multiplication Program
-#  DUT:  AeolusCPUTop
-
-def test_multiplication_runner():
-
-    print("Starting multiplication test...")
-
-    # Define Veriilog Sources and Directories
-
-    verilog_filename = "AeolusCPU.v"
-    verilog_file = src_path / verilog_filename
-    include_dirs = [str(inc_path)] 
-    vhdl_sources = []
-
-    # Check if the sources are valid before proceeding 
-    
-    Verify(src_path, inc_path, verilog_file, "")
-
-    # Get runner and run the build & test
-    
-    runner = get_runner(sim)
-
-    # Build the test environemnt
-    
-    runner.build(
-        verilog_sources=[str(verilog_file)] ,
-        includes=include_dirs,  # Ensure it's a list
-        vhdl_sources=vhdl_sources,
-        hdl_toplevel="AeolusCPUTop",
-        timescale = ("1us","1ns"),
-        always=True,
-    )
-    
-    # Run the test 
-    
-    runner.test(hdl_toplevel="AeolusCPUTop", test_module="testMultiplicationProgram")
-    
-    print("multiplication test complete!")
-
-#  ////////////////////////////////////////////////////////////////////////////// #
-
-#  Test: Shifter Test Suite 
-#  DUT:  Shifter
-
-def test_shifter_runner():
-    
-    # Define Veriilog Sources and Directories
-
-    verilog_filename = "Registers.v"
-    verilog_file = src_path / verilog_filename
-    include_dirs = [str(inc_path)] 
-    vhdl_sources = []
-
-    # Check if the sources are valid before proceeding 
-    
-    Verify(src_path, inc_path, verilog_file, "")
-
-    # Get runner 
-
-    runner = get_runner(sim)
-
-    # Build the test environemnt
-
-    runner.build(
-        verilog_sources=[str(verilog_file)],
-        includes=include_dirs, 
-        vhdl_sources=vhdl_sources,
-        timescale = ("1us","1ns"),
-        hdl_toplevel="ShiftRegister",
-        always=True
-    )
-    runner.test(hdl_toplevel="ShiftRegister", test_module="testShifter")
 
 # ////////////////////////////////////////////////////////////////////////////// #
 
-def test_dff_runner():
-
-    print("Starting DFF test...")
-
-   # Define Veriilog Sources and Directories
-
-    verilog_filename = "Registers.v"
-    verilog_file = src_path / verilog_filename
-    include_dirs = [str(inc_path)] 
-    vhdl_sources = []
-
-    # Check if the sources are valid before proceeding 
+def RunTest(_test_name, _src_file, _top_module, _test_file, _src_dir=src_path, _inc_dir=inc_path, _dump_file="dump.vcd", _run=1):
     
-    Verify(src_path, inc_path, verilog_file, "")
+    if (_run == 1):
 
-    # Get runner and run the build & test
-    runner = get_runner(sim)
+        print(f"Starting {_test_name}...")
 
-    runner.build(
-        verilog_sources=verilog_file,
-        includes=include_dirs, 
-        vhdl_sources=vhdl_sources,
-        hdl_toplevel="AeolusCPUTop",
-        timescale = ("1us","1ns"),
-        always=True,
-    )
+        verilog_filename = _src_file
+        verilog_file = _src_dir / verilog_filename
+        include_dirs = [str(_inc_dir)] 
+        vhdl_sources = []
 
-    runner.test(hdl_toplevel="AeolusCPUTop", test_module="testMultiplicationProgram")
-    
-    print("multiplication test complete...")
+        # Check if the sources are valid before proceeding 
+        
+        Verify(src_path, inc_path, verilog_file, "")
 
-# ///////////////////////////////////////////////////////////////////////////// #
+        # Get runner and run the build & test
+        
+        runner = get_runner(sim)
+
+        # Build the test environemnt
+        
+        runner.build(
+            verilog_sources=[str(verilog_file)],
+            includes=include_dirs,  # Ensure it's a list
+            vhdl_sources=vhdl_sources,
+            hdl_toplevel=_top_module,
+            timescale = ("1us","1ns"),
+            always=True,
+        )   
+        
+        # Run the test 
+        
+        runner.test(hdl_toplevel=_top_module, test_module=_test_file)
+        
+        print(f"Finished {_test_name}!")
+
+    else:
+        print(f"Skipped {_test_name}.")
+        return
+        
+# ////////////////////////////////////////////////////////////////////////////// #
+
 
 if __name__ == "__main__":
+   
+    # ///////////////////////////////////////////////////#
+
+    #  Test: Multiplication Program
+    #  DUT:  AeolusCPUTop
+    
+    RunTest (
+         _test_name="CPU Tests",
+         _src_file="AeolusCPU.v",
+         _top_module="AeolusCPUTop", 
+         _test_file="testMultiplicationProgram",
+         _run=1
+    )
+   
+    # ///////////////////////////////////////////////////#
+
+    #  Test: Shifter Test Suite 
+    #  DUT:  Shifter
+
     RunTest(
-        "Multiplication Test Program",
-        _test_name,
-        _src_file="",
-        _top_module="", 
-        _test_file=""
-     )
-    test_shifter_runner()
+         _test_name="Shifter Tests",
+         _src_file="Registers.v",
+         _top_module="ShiftRegister", 
+         _test_file="testShifter",
+         _run=0
+    )
+
+    # ///////////////////////////////////////////////////#
+
+    #  Test: DFF tests
+    #  DUT:  DFF
+
+    RunTest(
+         _test_name="DFF Tests",
+         _src_file="Registers.v",
+         _top_module="DFF", 
+         _test_file="testDFF",
+         _run=0
+    )
+
+   
+    # ///////////////////////////////////////////////////#
+
+    #  Test: Reset-Enable DFF tests
+    #  DUT:  ResetEnableDFF
+
+    RunTest(
+         _test_name="(Reset Enable) DFF Tests",
+         _src_file="Registers.v",
+         _top_module="DFF", 
+         _test_file="testREDFF",
+         _run=0
+    )
+
+   
+    # ///////////////////////////////////////////////////#
+   
+
+   
+
+
+
