@@ -1,8 +1,4 @@
-`include "ALU.v"
-`include "Control.v"
-`include "ROM.v"
 `timescale 1us/1ns
-
 // Development Tasks
 //  todo: Paramaterise all bus lenghts inside ALU
 //  todo: comment and document the design so far.
@@ -14,7 +10,7 @@
 //  todo: reduce logic - ALU minimisation/component reuse
 
 //  Extension Tasks 
-    //  - develop a pipelined version of the CPU with extended instruction set (w/ NOP) for graphicsß
+    //  - develop a pipelined version of the CPU with extended instruction set (w/ NOP) for graphicsÃŸ
     //  - Impliment Branches
     //  - Impliment VGA
     //  - Write Simple Graphics Demo
@@ -26,13 +22,14 @@ module AeolusCPUTop (
     output reg [OUTPUT_DATA_WIDTH-1:0]  cpuOut
 );
 
-    parameter ROM_ADDRESS_WIDTH = 8;
+    parameter ROM_ADDRESS_WIDTH = 5;
     parameter INPUT_DATA_WIDTH = 4;
     parameter OUTPUT_DATA_WIDTH = 8;
 
     // Clock divider 
     // Optionally splits the board clocck into a lower frequency
     clkDiv clkdiv(  .CLKin(boardCLK), .CLKout(clk) );
+    defparam clkdiv.COUNTER_TARGET = 24; // display speed
 
     wire [ROM_ADDRESS_WIDTH-1:0] PCin;   // Next address to be decoded
     wire [ROM_ADDRESS_WIDTH-1:0] PCout;  // Current address being decoded
@@ -54,7 +51,7 @@ module AeolusCPUTop (
     wire [3:0] opcode; // Current opcode being executed - output from instruction ROM 
     
     // Instruction Decoder
-    // Decodes the opcode from the program rom and outputs the appropriate control signalsß
+    // Decodes the opcode from the program rom and outputs the appropriate control signalsÃŸ
     InstructionDecoder decoder (
         .instructionIn(opcode),
         .LDA  (_LDA),
