@@ -14,7 +14,7 @@
 `define CHAR_K 7'b0001001
 `define CHAR_L 7'b1110001
 `define CHAR_M 7'b0101010
-`define CHAR_N 7'b1101010
+`define CHAR_N 7'b0001001
 `define CHAR_O 7'b0000001
 `define CHAR_P 7'b0001100
 `define CHAR_Q 7'b0001000
