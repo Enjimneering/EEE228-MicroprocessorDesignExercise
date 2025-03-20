@@ -5,8 +5,8 @@
 // Arithmetic Unit Components
 /*
                Arithmetic Unit
-            /         |         \
-        4bitAdder 4bitSubtractor 4bitShifter
+                /            \
+            Adder         Subtractor
         
 */
 
@@ -18,52 +18,55 @@ module ArithmeticLogicUnit (
     input wire       XOR,
     input wire       INV,
     input wire       CLR,
-    input wire [DATA_WIDTH-1:0] in1,
-    input wire [DATA_WIDTH-1:0] in2, 
-    output reg [DATA_WIDTH-1:0] out,
+    input wire [INPUT_DATA_WIDTH-1:0] in1,
+    input wire [INPUT_DATA_WIDTH-1:0] in2, 
+    output reg [INPUT_DATA_WIDTH-1:0] out,
     output reg       overflow
 
 );
-    parameter DATA_WIDTH = 8;
+    parameter INPUT_DATA_WIDTH = 8;
+    parameter LOGIC_DATA_WIDTH = 4;
+    parameter ARITHMETIC_DATA_WIDTH = 8;
 
-    wire [7:0] adderOut, subtractorOut;
-    wire adderOverflowFlag, subtractorOverflowFlag;
-    wire [3:0] andOut;
-    wire [3:0] orOut;
-    wire [3:0] xorOut;
-    wire [3:0] notOut;
+    wire [INPUT_DATA_WIDTH-1:0] adderOut, subtractorOut, arithmeticOut;
+    wire adderOverflowFlag, subtractorOverflowFlag, arithmeticOverflowFlag;
 
-    CombAdder           adder      (in1, in2, adderOut, adderOverflowFlag); defparam adder.DATA_WIDTH=8;
-    CombSubtractor      subtractor (in1, in2, subtractorOut, subtractorOverflowFlag); defparam subtractor.DATA_WIDTH=8;
+    wire [LOGIC_DATA_WIDTH-1:0] andOut;
+    wire [LOGIC_DATA_WIDTH-1:0] orOut;
+    wire [LOGIC_DATA_WIDTH-1:0] xorOut;
+    wire [LOGIC_DATA_WIDTH-1:0] notOut;
 
-    And_4bit            andGate    (in1[3:0], in2[3:0], andOut);
-    Or_4bit             orGate     (in1[3:0], in2[3:0], orOut);
-    Xor_4bit            xorGate    (in1[3:0], in2[3:0], xorOut);
-    Inv_4bit            notGate    (in1[3:0], notOut);
+    combAdder           adder      (in1, in2, adderOut, adderOverflowFlag); 
+                                   defparam adder.DATA_WIDTH=ARITHMETIC_DATA_WIDTH;
+    combSubtractor      subtractor (in1, in2, subtractorOut, subtractorOverflowFlag); 
+                                   defparam subtractor.DATA_WIDTH=ARITHMETIC_DATA_WIDTH;
+
+    CombAdderSubtractor arithmeticUnit (in1, in2, _SUB, arithmeticOut, arithmeticOverflowFlag);
+
+    combAND And (in1[LOGIC_DATA_WIDTH-1:0],in2[LOGIC_DATA_WIDTH-1:0], andOut);
+    combOR  Or  (in1[LOGIC_DATA_WIDTH-1:0],in2[LOGIC_DATA_WIDTH-1:0], orOut);
+    combXOR Xor (in1[LOGIC_DATA_WIDTH-1:0],in2[LOGIC_DATA_WIDTH-1:0], xorOut);
+    combINV Inv (in1[LOGIC_DATA_WIDTH-1:0], notOut);
 
     always @(*) begin // mux for control signals - assumes they won't be sent together
         
         out = 0; // is this correct?
         overflow = 0; // is this correct
         
-        if (ADD) begin
-            out = adderOut;
-            overflow = adderOverflowFlag;
-        end
-        
-        else if (SUB) begin
-            out = subtractorOut;
-            overflow = subtractorOverflowFlag;
+        // Arithmetic
+        if (ADD || SUB) begin
+            out = arithmeticOut;
+            overflow = arithmeticOut;
         end
         
         // Logic
         else if (AND) begin
-            out =  andOut;
+            out = andOut;
             overflow = 0; 
         end
 
         else if (OR) begin
-            out =  orOut;
+            out = orOut;
             overflow = 0;
         end
 
@@ -73,7 +76,7 @@ module ArithmeticLogicUnit (
         end
 
         else if (INV) begin
-            out =  notOut;
+            out = notOut;
             overflow = 0;    
         end
 
@@ -98,9 +101,9 @@ module FullAdder (
 
 endmodule
 
-// paramatreised size for input/output
+// paramatreized bus sizes for input/output
 
-module CombAdder (  // Conbinational, Behavioural Description
+module combAdder (  // Conbinational, Behavioural Description
     input wire  [DATA_WIDTH - 1:0]  in1,
     input wire  [DATA_WIDTH - 1:0]  in2,
     output reg  [DATA_WIDTH - 1:0]  out,
@@ -114,7 +117,7 @@ module CombAdder (  // Conbinational, Behavioural Description
 
 endmodule
 
-module CombSubtractor (  // Combinational - Behavioural Description
+module combSubtractor (  // Combinational - Behavioural Description
     input wire  [DATA_WIDTH - 1:0]  in1,
     input wire  [DATA_WIDTH - 1:0]  in2,
     output reg  [DATA_WIDTH - 1:0]  out,
@@ -128,54 +131,61 @@ module CombSubtractor (  // Combinational - Behavioural Description
 
 endmodule
 
+module CombAdderSubtractor( // optimised adder/subtractor
+    input wire [DATA_WIDTH-1:0] in1, in2,
+    input wire sub, 
+    output wire [DATA_WIDTH-1:0] out,
+    output wire overflow
+);
+    parameter DATA_WIDTH = 8;
+    assign {overflow, out} = in1 + (sub ? (~in2 + 1) : in2); // Two's complement for subtraction
+endmodule
 
 
 // Logic Unit Components
 
-/*            Logic Unit
-        /      |        |     \  
-      AND      OR       XOR    INV
+/*             Logic Unit
+           /    |      |     \  
+         AND   OR     XOR    INV
 */
 
-
 //4-bit AND - combinational
-module And_4bit(
-    input wire [3:0] in1,
-    input wire [3:0] in2,
-    output wire [3:0] out
-);
 
+module combAND(
+    input wire  [DATA_WIDTH-1:0] in1, in2,
+    output wire [DATA_WIDTH-1:0] out
+);
+    parameter DATA_WIDTH  = 4; //4-bit by default;
     assign out = in1 & in2;
 
 endmodule 
 
 // 4-bit OR - combinational
-module Or_4bit(
-    input wire [3:0] in1,
-    input wire [3:0] in2,
-    output wire [3:0] out
+module combOR(
+    input  wire [DATA_WIDTH-1:0] in1, in2,
+    output wire [DATA_WIDTH-1:0] out
 );
-
+    parameter DATA_WIDTH  = 4; //4-bit by default;
     assign out = in1 | in2;
 
 endmodule
 
 //4 -bit XOR - combinational 
-module Xor_4bit (
-    input wire [3:0] in1, in2,
-    output wire [3:0] out
+module combXOR (
+    input wire  [DATA_WIDTH-1:0] in1, in2,
+    output wire [DATA_WIDTH-1:0] out
 );
-
+    parameter DATA_WIDTH  = 4; //4-bit by default;
     assign out = in1 ^ in2;
 
 endmodule 
 
 //4 -bit XOR - combinational 
-module  Inv_4bit (
-    input wire [3:0] in1, 
-    output wire [3:0] out
+module combINV (
+    input wire [DATA_WIDTH-1:0] in1, 
+    output wire [DATA_WIDTH-1:0] out
 );
-
+    parameter DATA_WIDTH  = 4; //4-bit by default;
     assign out = ~in1;
 
 endmodule 

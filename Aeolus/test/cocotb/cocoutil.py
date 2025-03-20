@@ -3,8 +3,14 @@ from cocotb.triggers import RisingEdge
 from cocotb.triggers import Timer
 from cocotb.clock import Clock
 
+
+
+def SetDumpFile(dumpfile, dut):
+    dut._top_level_dump = dumpfile +".dump"  # Define top-level dump file
+
+
 def VerifyVerilogSources(_srcPath, _includepath, _verilogFile, _includeFiles):
-    
+        
     if not _srcPath.exists():
         raise FileNotFoundError(f"Error: Source directory '{_srcPath}' does not exist!")
 
@@ -19,7 +25,7 @@ def VerifyVerilogSources(_srcPath, _includepath, _verilogFile, _includeFiles):
         verilog_file = _srcPath / fileName
         if not verilog_file.exists():
             raise FileNotFoundError(f"Error: Verilog file '{_includeFiles}' not found!")
-                
+                    
 
 # generate 1us clock pulse
 async def posedge(signal):

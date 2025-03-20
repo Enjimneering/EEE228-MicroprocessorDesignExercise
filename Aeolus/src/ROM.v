@@ -22,7 +22,7 @@ module ProgramROM (    // ROM for the main system
                9:  dataOut = 4'b0110; // RSH
                10: dataOut = 4'b1000; // SNZ A
                11: dataOut = 4'b0010; // LDS B
-               12: dataOut = 4'b0010; // LSH
+               12: dataOut = 4'b0010; // LSHd
                13: dataOut = 4'b0100; // SNZ S
                14: dataOut = 4'b0010; // LDO
                default: dataOut = 5'b0111; // CLR - basically a NOP operation.

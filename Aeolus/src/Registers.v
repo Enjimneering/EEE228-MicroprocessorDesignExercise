@@ -47,6 +47,13 @@ module DFF (   // standard D-type Flip Flop
             Q <= D;
     end
 
+
+   initial begin // dump output
+        $dumpfile("DFFdump.vcd");
+        $dumpvars(0, DFF);
+    end
+
+
 endmodule
 
 module EnableDFF (  // DFF with enable 

@@ -4,7 +4,7 @@
 `timescale 1us/1ns
 
 // Development Tasks
-//  todo: Paramaterise all bus lenghts
+//  todo: Paramaterise all bus lenghts inside ALU
 //  todo: comment and document the design so far.
 //  todo: write testbenches and sign off on:
     //  Registers - DFF, ResetDFF, ResetEnableDFF
@@ -20,10 +20,10 @@
     //  - Write Simple Graphics Demo
 
 module AeolusCPUTop (
-    input wire       boardCLK,
-    input wire       reset,
-    input wire [7:0] switches,
-    output reg [7:0] cpuOut
+    input wire boardCLK,
+    input wire reset,
+    input wire [INPUT_DATA_WIDTH*2-1:0] switches,
+    output reg [OUTPUT_DATA_WIDTH-1:0]  cpuOut
 );
 
     parameter ROM_ADDRESS_WIDTH = 8;
@@ -44,7 +44,7 @@ module AeolusCPUTop (
    
     // Incrementer
     // Incrememnts the program counter
-    CombAdder inc (PCout, 8'b0000_0001, PCin , PCoverflow); 
+    combAdder inc (PCout, 8'b0000_0001, PCin , PCoverflow); 
     defparam inc.DATA_WIDTH = ROM_ADDRESS_WIDTH;
 
     // Program ROM
@@ -75,8 +75,8 @@ module AeolusCPUTop (
         .INV  (_INV)
     );
 
-    wire [INPUT_DATA_WIDTH-1:0]  Aout, Bout;
-    wire [OUTPUT_DATA_WIDTH-1:0] Oout;
+    wire  [INPUT_DATA_WIDTH-1:0]  Aout, Bout;
+    wire  [OUTPUT_DATA_WIDTH-1:0] Oout;
     wire  [OUTPUT_DATA_WIDTH-1:0] Oin;
 
     // Regsiter File 
@@ -84,7 +84,8 @@ module AeolusCPUTop (
     RegisterFile registerFile (
         .clk(clk),
         .reset(reset),
-        .AIn(switches[7:4]),
+        // split switch input into A and B input
+        .AIn(switches[7:4]), 
         .BIn(switches[3:0]),
         .OIn(ACCout),
         .LDA(_LDA),
@@ -125,7 +126,6 @@ module AeolusCPUTop (
     // e.g (SNZA, SNZB, LDSA and LDSB require different inputs.
 
     ALU_MUX alumux (_SNZA, _SNZS, SF ,shiftOut, ACCout, Aout, Bout, in1,in2);
-
 
     // Arithmetic Logic Unit (combintorial)
     ArithmeticLogicUnit alu( 
