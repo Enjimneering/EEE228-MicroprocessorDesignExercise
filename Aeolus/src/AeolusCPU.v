@@ -7,7 +7,7 @@
     //  Shifter - Flag, LSH and RSH Results
     //  Conditional instructions - SNZS, SNZA
 //  todo: develop FPGA TestSocket Modules (7-Seg)
-//  todo: reduce logic - ALU minimisation/component reuse
+//  todo: reduce logic - ALU minimisation/counter minimisation
 
 //  Extension Tasks 
     //  - develop a pipelined version of the CPU with extended instruction set (w/ NOP) for graphicsÃŸ
@@ -36,13 +36,17 @@ module AeolusCPUTop (
     
     // Program Counter
     // Outputs the address of the instruction being executed and increments every clk cycle
-    ResetEnableDFF PC (clk, reset, 1'b1 , PCin, PCout);
-    defparam PC.DATA_WIDTH = ROM_ADDRESS_WIDTH;
+    // ResetEnableDFF PC (clk, reset, 1'b1 , PCin, PCout);
+    // defparam PC.DATA_WIDTH = ROM_ADDRESS_WIDTH;
    
-    // Incrementer
-    // Incrememnts the program counter
-    combAdder inc (PCout, 8'b0000_0001, PCin , PCoverflow); 
-    defparam inc.DATA_WIDTH = ROM_ADDRESS_WIDTH;
+    // Counter PC
+    Counter programCounter (clk, reset, 1'b1, PCout);
+    defparam programCounter.DATA_WIDTH = ROM_ADDRESS_WIDTH;
+
+    // // Incrementer
+    // // Incrememnts the program counter
+    // combAdder inc (PCout, 8'b0000_0001, PCin , PCoverflow); 
+    // defparam inc.DATA_WIDTH = ROM_ADDRESS_WIDTH;
 
     // Program ROM
     // Stores the program  
@@ -93,7 +97,7 @@ module AeolusCPUTop (
         .Oout(Oout)
     );
 
-    //shift Instructions/ Control Singals
+    //Shift Instructions/ Control Singals
     wire _LDSA, _LDSB;                      // Load shift register
     wire _LSH, _RSH;                        // Shift Control signals
     wire [INPUT_DATA_WIDTH-1:0]  shiftIn;
@@ -110,6 +114,7 @@ module AeolusCPUTop (
     wire _ADDin; // ALU addition control flag
 
     // MUX for addition control flag
+
     ADD_MUX addmux (_ADD, _SNZA,_SNZS, SF, _ADDin);
 
     wire _ADD, _SUB;                // Arithmetic
@@ -124,7 +129,7 @@ module AeolusCPUTop (
 
     ALU_MUX alumux (_SNZA, _SNZS, SF ,shiftOut, ACCout, Aout, Bout, in1,in2);
 
-    // Arithmetic Logic Unit (combintorial)
+    // Arithmetic Logic Unit (combinatorial)
     ArithmeticLogicUnit alu( 
         .ADD(_ADDin),
         .SUB(_SUB),

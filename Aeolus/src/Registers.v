@@ -53,7 +53,6 @@ module DFF (   // standard D-type Flip Flop
         $dumpvars(0, DFF);
     end
 
-
 endmodule
 
 module EnableDFF (  // DFF with enable 
@@ -90,6 +89,11 @@ module ResetEnableDFF ( // synchronous reset with enable
         end
     end
 
+    initial begin // dump output
+        $dumpfile("shifterdump.vcd");
+        $dumpvars(0, ShiftRegister);
+    end
+
 endmodule
 
 module ResetDFF ( // synchronous reset, no enable
@@ -110,8 +114,32 @@ module ResetDFF ( // synchronous reset, no enable
 
 endmodule
 
+
+module Counter (   // counter D-type Flip Flop 
+    input wire  clk,
+    input wire  reset,
+    input wire  enable,
+    output reg  [DATA_WIDTH-1:0]  Q
+);
+    parameter DATA_WIDTH  = 4;
+
+    always @(posedge clk) begin
+        if (reset) begin // Reset should be checked first
+            Q <= 0; 
+        end else if (enable) begin // Only update if enabled
+            Q <= Q + 1;
+        end
+    end
+
+   initial begin // dump output
+        $dumpfile("Counterdump.vcd");
+        $dumpvars(0, Counter);
+    end
+
+endmodule
+
 // Shift Register
-// register with mux for inputs - flag implimented for RSH underflow
+// Enable DFF with shift functionalit - flag implimented for RSH underflow
 
 module ShiftRegister ( // synchronous reset, with enable
     input wire       clk,

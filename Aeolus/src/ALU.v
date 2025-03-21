@@ -36,12 +36,9 @@ module ArithmeticLogicUnit (
     wire [LOGIC_DATA_WIDTH-1:0] xorOut;
     wire [LOGIC_DATA_WIDTH-1:0] notOut;
 
-    combAdder           adder      (in1, in2, adderOut, adderOverflowFlag); 
-                                   defparam adder.DATA_WIDTH=ARITHMETIC_DATA_WIDTH;
-    combSubtractor      subtractor (in1, in2, subtractorOut, subtractorOverflowFlag); 
-                                   defparam subtractor.DATA_WIDTH=ARITHMETIC_DATA_WIDTH;
 
-    CombAdderSubtractor arithmeticUnit (in1, in2, _SUB, arithmeticOut, arithmeticOverflowFlag);
+    combAdderSubtractor arithmeticUnit (in1, in2, SUB, arithmeticOut, arithmeticOverflowFlag);
+
 
     combAND And (in1[LOGIC_DATA_WIDTH-1:0],in2[LOGIC_DATA_WIDTH-1:0], andOut);
     combOR  Or  (in1[LOGIC_DATA_WIDTH-1:0],in2[LOGIC_DATA_WIDTH-1:0], orOut);
@@ -53,13 +50,13 @@ module ArithmeticLogicUnit (
         out = 0; // is this correct?
         overflow = 0; // is this correct
         
-        // Arithmetic
+        // Arithmetic Operations
         if (ADD || SUB) begin
             out = arithmeticOut;
-            overflow = arithmeticOut;
+            overflow = arithmeticOverflowFlag;
         end
         
-        // Logic
+        // Logic Operations
         else if (AND) begin
             out = andOut;
             overflow = 0; 
@@ -131,7 +128,7 @@ module combSubtractor (  // Combinational - Behavioural Description
 
 endmodule
 
-module CombAdderSubtractor( // optimised adder/subtractor
+module combAdderSubtractor( // optimised adder/subtractor
     input wire [DATA_WIDTH-1:0] in1, in2,
     input wire sub, 
     output wire [DATA_WIDTH-1:0] out,
