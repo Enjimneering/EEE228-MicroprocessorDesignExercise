@@ -20,19 +20,18 @@ async def TestMultiplicationAlgorithm(dut):
         for regB in range(16):
             
             # set switches value
-
             dut.switches.value = (regA<<4|regB)
-            #print(f"A: {regA} B: {regB}")
+            # print(f"A: {regA} B: {regB}")
+            await posedge(dut.clk)
 
             # run program in ROM (wait till PC wraps round)
-
-            await posedge(dut.clk)
+            
             await RunProgram(dut)
 
-            # assert that Ÿoutput = in1 * in2
+            # assert that output = in1 * in2
 
             assert dut.cpuOut.value == (regA * regB)
-            # print(f"Output: {dut.cpuOut.value}")
+           # print(f"Output: {dut.cpuOut.value}")
         
 
     

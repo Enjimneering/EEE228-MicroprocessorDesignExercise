@@ -9,7 +9,7 @@ from cocoutil import GenerateClock, posedge
 #        [3:0] Q, 
 
 @cocotb.test()
-async def TestDFFLoad(dut):
+async def TestDFF(dut):
     
     # set initial input values
     dut.D.value = 0
@@ -17,7 +17,7 @@ async def TestDFFLoad(dut):
     await GenerateClock(dut)
     
     for dffIN in range(16):
-           
+        
         # Set DFF input
         dut.D.value = dffIN
         await posedge(dut.clk) 

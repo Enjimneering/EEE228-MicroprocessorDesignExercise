@@ -98,10 +98,9 @@ if __name__ == "__main__":
          _src_file="Registers.v",
          _top_module="DFF", 
          _test_file="testDFF",
-         _run=0
+         _run=1
     )
 
-   
     # ///////////////////////////////////////////////////#
 
     #  Test: Reset-Enable DFF tests
@@ -110,12 +109,12 @@ if __name__ == "__main__":
     RunTest(
          _test_name="(Reset Enable) DFF Tests",
          _src_file="Registers.v",
-         _top_module="DFF", 
-         _test_file="testREDFF",
-         _run=0
+         _top_module="ResetEnableDFF", 
+         _test_file="testResetEnableDFF",
+         _run=1
     )
 
-   
+
     # ///////////////////////////////////////////////////#
    
 
