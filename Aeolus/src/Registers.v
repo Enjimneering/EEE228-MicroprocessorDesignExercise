@@ -18,7 +18,6 @@ module RegisterFile (
     parameter OUTPUT_WIDTH = 8;
     parameter INPUT_WIDTH = 4;
 
-
     // A register
     ResetEnableDFF RegA (clk, reset, LDA, AIn, Aout);
     defparam RegA.DATA_WIDTH = INPUT_WIDTH;
@@ -87,11 +86,6 @@ module ResetEnableDFF ( // synchronous reset with enable
         end else if (enable) begin // Only update if enabled
             Q <= D;
         end
-    end
-
-    initial begin // dump output
-        $dumpfile("shifterdump.vcd");
-        $dumpvars(0, ShiftRegister);
     end
 
 endmodule
@@ -189,7 +183,5 @@ module ShiftRegister ( // synchronous reset, with enable
         $dumpfile("shifterdump.vcd");
         $dumpvars(0, ShiftRegister);
     end
-
-
 
 endmodule

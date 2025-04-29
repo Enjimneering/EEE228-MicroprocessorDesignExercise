@@ -8,26 +8,24 @@ module ProgramROM (    // ROM for the main system
     parameter ADDR_WIDTH = 8;
 
     always @(*) begin
-     
-          case (addressIn)
-               0:  dataOut = 4'b0000; // LDA
-               1:  dataOut = 4'b0001; // LDB
-               2:  dataOut = 4'b1010; // ADD
-               3:  dataOut = 4'b0010; // LD O
-               4:  dataOut = 4'b1011; // SUB
-               5:  dataOut = 4'b0010; // LDO
-               6:  dataOut = 4'b1110; // XOR
-               7:  dataOut = 4'b0010; // LDO
-               8:  dataOut = 4'b0011; // LDS A
-               9:  dataOut = 4'b0110; // RSH
-               10: dataOut = 4'b1000; // SNZ A
-               11: dataOut = 4'b0010; // LDS B
-               12: dataOut = 4'b0010; // LSHd
-               13: dataOut = 4'b0100; // SNZ S
-               14: dataOut = 4'b0010; // LDO
-               default: dataOut = 5'b0111; // CLR - basically a NOP operation.
-          endcase
-          
+        case (addressIn)
+            0:  dataOut = 4'b0000; // LDA
+            1:  dataOut = 4'b0001; // LDB
+            2:  dataOut = 4'b1010; // ADD
+            3:  dataOut = 4'b0010; // LD O
+            4:  dataOut = 4'b1011; // SUB
+            5:  dataOut = 4'b0010; // LDO
+            6:  dataOut = 4'b1110; // XOR
+            7:  dataOut = 4'b0010; // LDO
+            8:  dataOut = 4'b0011; // LDS A
+            9:  dataOut = 4'b0110; // RSH
+            10: dataOut = 4'b1000; // SNZ A
+            11: dataOut = 4'b0010; // LDS B
+            12: dataOut = 4'b0010; // LSH
+            13: dataOut = 4'b0100; // SNZ S
+            14: dataOut = 4'b0010; // LDO
+            default: dataOut = 5'b0111; // CLR - basically a NOP operation.
+        endcase
     end
 
 endmodule

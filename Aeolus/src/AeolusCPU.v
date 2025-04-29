@@ -1,4 +1,10 @@
-`timescale 1us/1ns
+`timescale 1us/1ns 
+
+`include "Control.v"
+`include "ALU.v"
+`include "Registers.v"
+`include "ROM.v"
+
 // Development Tasks
 //  todo: Paramaterise all bus lenghts inside ALU
 //  todo: comment and document the design so far.
