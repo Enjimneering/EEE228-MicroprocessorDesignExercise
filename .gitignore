@@ -4,3 +4,7 @@ settings.json
 *.pyc
 Aeolus/Makefile
 
+Aeolus/test/cocotb/__pycache__/cocoutil.cpython-313-pytest-8.3.5.pyc
+Aeolus/test/cocotb/__pycache__/cocoutil.cpython-313.pyc
+Aeolus/test/cocotb/__pycache__/testMultiplicationProgram.cpython-313-pytest-8.3.5.pyc
+Aeolus/test/cocotb/__pycache__/testShifter.cpython-313-pytest-8.3.5.pyc

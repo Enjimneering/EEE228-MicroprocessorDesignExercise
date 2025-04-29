@@ -72,7 +72,7 @@ if __name__ == "__main__":
          _src_file="AeolusCPU.v",
          _top_module="AeolusCPUTop", 
          _test_file="testMultiplicationProgram",
-         _run=0
+         _run=1
     )
    
     # ///////////////////////////////////////////////////#
@@ -85,7 +85,7 @@ if __name__ == "__main__":
          _src_file="Registers.v",
          _top_module="ShiftRegister", 
          _test_file="testShifter",
-         _run=1
+         _run=0
     )
 
     # ///////////////////////////////////////////////////#
@@ -98,7 +98,7 @@ if __name__ == "__main__":
          _src_file="Registers.v",
          _top_module="DFF", 
          _test_file="testDFF",
-         _run=1
+         _run=0
     )
 
     # ///////////////////////////////////////////////////#
@@ -111,7 +111,7 @@ if __name__ == "__main__":
          _src_file="Registers.v",
          _top_module="ResetEnableDFF", 
          _test_file="testResetEnableDFF",
-         _run=1
+         _run=0
     )
 
 
