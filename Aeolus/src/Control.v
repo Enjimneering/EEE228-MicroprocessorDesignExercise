@@ -111,12 +111,12 @@ module SR_MUX (
     input wire       _LDSB,
     input wire [3:0] Aout,
     input wire [3:0] Bout,
-    output reg [3:0] shiftIn,
+    output wire [3:0] shiftIn,
     output wire      _LSR
 );
     assign _LSR = _LDSA | _LDSB;
     
-    always @(*) begin
+   /* always @(*) begin
         if (_LDSA) begin
            shiftIn = Aout;
         end else if (_LDSB) begin
@@ -124,10 +124,11 @@ module SR_MUX (
         end else begin
            shiftIn = 0;
         end
-    end
-
+    end 
+    */
+    
     // explicit MUX definition - might be smaller?
-    // assign shiftin = _LDSA ? Aout : (_LDSB ? Bout: 0 );
+    assign shiftIn = _LDSA ? Aout : (_LDSB ? Bout: 0 );
     
 endmodule
 
@@ -140,15 +141,20 @@ module ADD_MUX (
 );
     // mux implimentation
 
-    always @(*) begin
+   /* always @(*) begin
         if (SF & (_SNZA | _SNZS))
             _ADDin = 1'b1;
         else
             _ADDin = _ADD;
         end
-
+    
+    */
+    
     //  combinational expression 
-    // _ADDin = ((_SNZA | _SNZS) & SF) | ADDIN 
+    always @(*) begin
+        _ADDin = ((_SNZA | _SNZS) & SF) | _ADD ;
+    end
+    
 
 
 endmodule
@@ -165,22 +171,17 @@ module ALU_MUX (
     output reg [7:0] in1,
     output reg [7:0] in2
 );
+    wire cond_snza = (_SNZA && SF);
+    wire cond_snzs = (_SNZS && SF);
 
-    always @(*) begin 
-        // set ALU inputs
-        if ((_SNZA == 1  && SF == 1))  begin         // add ACC and Reg A .
-            in1 = Aout;
-            in2 = ACCout;
+    always @(*) begin
+        in1 = cond_snza ? Aout :
+            cond_snzs ? shiftOut :
+            Aout;
 
-        end else if ((_SNZS == 1 && SF == 1)) begin  // add ACC and Shifter
-            in1 = shiftOut;
-            in2 = ACCout;
-
-        end else begin // non conditional instructinos
-            in1 = Aout;
-            in2 = Bout;
-        end
+        in2 = (cond_snza || cond_snzs) ? ACCout : Bout;
     end
+
 endmodule
 
 
@@ -188,9 +189,7 @@ module ENABLE_ACC_MUX(
     input wire  _AND, _OR, _XOR, _INV, _ADDin, _SUB, _CLR,
     output wire enableACC
 );
-    wire logicSignal = _AND ||  _OR || _XOR || _INV;
-    wire arithmeticSignal = _ADDin || _SUB;
-    assign enableACC = _CLR || arithmeticSignal || logicSignal;  // alu needs to be enabled usign the relevant instruction
+    assign enableACC = _CLR || _ADDin || _SUB || _AND ||  _OR || _XOR || _INV;  // alu needs to be enabled usign the relevant instruction
 
 endmodule
 
