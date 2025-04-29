@@ -1,4 +1,6 @@
 settings.json
 *.vvp
 *.vcd
+*.pyc
 Aeolus/Makefile
+
